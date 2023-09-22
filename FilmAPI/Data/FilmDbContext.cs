@@ -12,8 +12,10 @@ public class FilmDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(
-            "data source=N-NO-01-03-9446\\SQLEXPRESS; initial catalog=FilmDb;Integrated Security = true; Trust Server Certificate = true;");
+        var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json").Build().GetConnectionString("FilmDb");
+        optionsBuilder.UseSqlServer( configuration
+           );
         optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
     }
 
