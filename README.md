@@ -10,9 +10,9 @@ Media.
 
 **Requirements**
 
-- [ ] Create models and DbContext to cater for the specifications
-- [ ]  Proper configuration of datatypes is to be done using data attributes.
-- [ ] Comments on each of the classes showing where navigation properties are and aspects of DbContext.
+- [x] Create models and DbContext to cater for the specifications
+- [x] Proper configuration of datatypes is to be done using data attributes.
+- [x] Comments on each of the classes showing where navigation properties are and aspects of DbContext.
 - [ ] Connection String should not be hard coded into DbContext.
 
 ### Create a Web API in ASP.NET Core
