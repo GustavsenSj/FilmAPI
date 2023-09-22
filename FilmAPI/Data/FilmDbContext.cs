@@ -84,5 +84,25 @@ public class FilmDbContext : DbContext
             }
         );
         /*-------------------------------- ADD CHARACTER SECTION END -----------------------------------*/
+
+        /*------------------ ESTABLISH RELATION BETWEEN MOVIES AND CHARS START -------------------------------*/
+        modelBuilder.Entity<Character>()
+                .HasMany(chr => chr.Movies)
+                .WithMany(movie => movie.Characters)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CharacterMovie",
+                    l => l.HasOne<Movie>().WithMany().HasForeignKey("MovieId"),
+                    r => r.HasOne<Character>().WithMany().HasForeignKey("CharacterId"),
+                    je =>
+                    {
+                        je.HasKey("CharacterId", "MovieId");
+                        je.HasData(
+                            new { CharacterId = 1, MovieId= 1 },
+                            new { CharacterId = 2, MovieId = 4 }
+                            );
+                    }
+                );
+        /*------------------ ESTABLISH RELATION BETWEEN MOVIES AND CHARS END -------------------------------**/
+
     }
 }
