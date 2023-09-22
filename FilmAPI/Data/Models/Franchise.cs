@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FilmAPI.Data.Models
 {
     public class Franchise
     {
-        public int FranchiseId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public int Id { get; set; }
+        [StringLength(60)]
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; } 
 
 
         /*------------------------iT's movies realtion stuff------------------------------*/
