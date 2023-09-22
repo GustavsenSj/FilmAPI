@@ -4,9 +4,9 @@ namespace FilmAPI.Data.Models
     {
         public int Id { get; set; }
         public string FullName { get; set; }
-        public string Alias { get; set; }   
+        public string Alias { get; set; }
         public string Gender { get; set; }
-        public string Picture { get; set; }
+        public string? Picture { get; set;} // Can be nullable
         
         public Movie Movie { get; set; } // Nav prop to realted movie.
 
