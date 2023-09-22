@@ -7,9 +7,12 @@ namespace FilmAPI.Data.Models
         public string Alias { get; set; }
         public string Gender { get; set; }
         public string? Picture { get; set;} // Can be nullable
-        
-        public Movie Movie { get; set; } // Nav prop to realted movie.
 
-        public int MovieId { get; set; } // FK for related movies Id
+
+        /*--------------------------Movie relation stuff------------------------------*/
+        // Associated movies for character nav prop
+        public ICollection<MovieCharacter> MoviesCharacters { get; set; } = new List<MovieCharacter>();
+        /*----------------------------------------------------------------------------*/
+
     }
 }
