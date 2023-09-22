@@ -7,7 +7,7 @@ public class FilmDbContext : DbContext
 {
     public DbSet<Character> Characters { get; set; }
     public DbSet<Movie> Movies { get; set; }
-    // public DbSet<Franchise> Franchises { get; set; }
+    public DbSet<Franchise> Franchises { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

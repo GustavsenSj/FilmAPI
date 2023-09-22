@@ -11,7 +11,7 @@ namespace FilmAPI.Data.Models
 
         /*--------------------------Movie relation stuff------------------------------*/
         // Associated movies for character nav prop
-        public ICollection<MovieCharacter> MoviesCharacters { get; set; } = new List<MovieCharacter>();
+        public ICollection<Movie> Movies { get; set; } = new List<Movie>();
         /*----------------------------------------------------------------------------*/
 
     }

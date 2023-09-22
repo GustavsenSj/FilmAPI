@@ -19,7 +19,7 @@ public class Movie
 
     /*---------------------It's characters relation stuff------------------------------*/
     // Nav prop for associated characters played in the movie.
-    public ICollection<MovieCharacter> MovieCharacters { get; set; } = new List<MovieCharacter>();
+    public ICollection<Character> Characters { get; set; } = new List<Character>();
     /*---------------------------------------------------------------------------------*/
 
 
