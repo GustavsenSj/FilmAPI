@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FilmAPI.Data.Models;
@@ -6,9 +7,12 @@ namespace FilmAPI.Data.Models;
 public class Movie
 {
     public int Id { get; set; }
+    [StringLength(201)] //longest movie title according to Wikipedia
     public string Title { get; set; } = null!;
+    [StringLength(50)]
     public string Genre { get; set; } = null!;
     public int ReleaseYear { get; set; }
+    [StringLength(70)]
     public string Director { get; set; } = null!;
     public string? Picture { get; set; }
     public string? Trailer { get; set; }
