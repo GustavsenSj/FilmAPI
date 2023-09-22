@@ -11,7 +11,8 @@ public class FilmDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("data source=N-NO-01-03-2688; initial catalog=FilmDb;Integrated Security = true; Trust Server Certificate = true;");
+        optionsBuilder.UseSqlServer(
+            "data source=N-NO-01-03-2688; initial catalog=FilmDb;Integrated Security = true; Trust Server Certificate = true;");
         optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
     }
 
