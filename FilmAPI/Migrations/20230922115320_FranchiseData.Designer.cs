@@ -4,6 +4,7 @@ using FilmAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FilmAPI.Migrations
 {
     [DbContext(typeof(FilmDbContext))]
-    partial class FilmDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230922115320_FranchiseData")]
+    partial class FranchiseData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,22 +66,6 @@ namespace FilmAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Characters");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Alias = "Luke Skywalker",
-                            FullName = "Mark Hamill",
-                            Gender = "Male"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Alias = "Anakin Skywalker",
-                            FullName = "Hayde Christensen",
-                            Gender = "Male"
-                        });
                 });
 
             modelBuilder.Entity("FilmAPI.Data.Models.Franchise", b =>
