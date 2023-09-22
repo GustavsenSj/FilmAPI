@@ -13,7 +13,7 @@ Media.
 - [x] Create models and DbContext to cater for the specifications
 - [x] Proper configuration of datatypes is to be done using data attributes.
 - [x] Comments on each of the classes showing where navigation properties are and aspects of DbContext.
-- [ ] Connection String should not be hard coded into DbContext.
+- [x] Connection String should not be hard coded into DbContext.
 
 ### Create a Web API in ASP.NET Core
 
@@ -34,6 +34,13 @@ This project was made as a group project by the following people:
 
 ## Installation and usage
 
+To run this project you need to have a local Microsoft SQL Server on your system. For connection to the database you need tho have a connection string in the appsettings.json file. The connection string should look like this:
+
+```json
+"ConnectionStrings": {
+    "FilmAPI": "your connection string here"
+  }
+```
 
 
 
