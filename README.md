@@ -34,12 +34,20 @@ This project was made as a group project by the following people:
 
 ## Installation and usage
 
-To run this project you need to have a local Microsoft SQL Server on your system. For connection to the database you need tho have a connection string in the appsettings.json file. The connection string should look like this:
+To run this project you need to have a local Microsoft SQL Server on your system. For connection to the database you
+need tho have a connection string in the appsettings.json file. The connection string should look like this:
 
 ```json
-"ConnectionStrings": {
-    "FilmAPI": "your connection string here"
-  }
+"ConnectionStrings":{
+"FilmAPI": "your connection string here"
+}
+```
+
+To create the database an populate it width dummy data you need to run the following commands in the Package Manager Console:
+
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database update
 ```
 
 
