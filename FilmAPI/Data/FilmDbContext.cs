@@ -1,4 +1,5 @@
 using FilmAPI.Data.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmAPI.Data;
@@ -12,7 +13,7 @@ public class FilmDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(
-            "data source=N-NO-01-03-2688; initial catalog=FilmDb;Integrated Security = true; Trust Server Certificate = true;");
+            "data source=N-NO-01-03-9446\\SQLEXPRESS; initial catalog=FilmDb;Integrated Security = true; Trust Server Certificate = true;");
         optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
     }
 
@@ -50,5 +51,28 @@ public class FilmDbContext : DbContext
                 Picture = null, Trailer = null
             }
         );
+
+        /*-------------------------------- ADD CHARACTER SECTION START ---------------------------------*/
+        modelBuilder.Entity<Character>().HasData(
+            new Character
+            {
+                Id = 1,
+                FullName = "Mark Hamill",
+                Alias = "Luke Skywalker",
+                Gender = "Male",
+                Picture = null
+            },
+            new Character
+            {
+                Id = 2,
+                FullName = "Hayde Christensen",
+                Alias = "Anakin Skywalker",
+                Gender = "Male",
+                Picture = null
+            }
+        );
+        /*-------------------------------- ADD CHARACTER SECTION END -----------------------------------*/
+
+
     }
 }
