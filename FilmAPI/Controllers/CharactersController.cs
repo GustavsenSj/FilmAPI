@@ -44,7 +44,7 @@ namespace FilmAPI.Controllers
 
             if (character == null)
             {
-                return NotFound();
+                return NotFound($"Couldn't find character with ID {id}.");
             }
 
             return character;
