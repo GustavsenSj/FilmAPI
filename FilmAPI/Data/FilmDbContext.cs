@@ -1,26 +1,38 @@
 using FilmAPI.Data.Models;
-using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmAPI.Data;
 
 public class FilmDbContext : DbContext
 {
-    public DbSet<Character> Characters { get; set; }
-    public DbSet<Movie> Movies { get; set; }
-    public DbSet<Franchise> Franchises { get; set; }
+    public FilmDbContext(DbContextOptions<FilmDbContext> options) : base(options)
+    {
+    }
 
+    public DbSet<Character> Characters { get; set; } = null!;
+    public DbSet<Movie> Movies { get; set; } = null!;
+    public DbSet<Franchise> Franchises { get; set; } = null!;
+
+    /// <summary>
+    /// Override the OnConfiguring method to to get the connections string from the appsettings.json file. Also sets the logging level to Information.
+    /// </summary>
+    /// <param name="optionsBuilder"></param>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+        String? configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json").Build().GetConnectionString("FilmDb");
-        optionsBuilder.UseSqlServer( configuration
-           );
+        optionsBuilder.UseSqlServer(configuration
+        );
         optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
     }
 
+    /// <summary>
+    /// Override the OnModelCreating method to seed the database with data.
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Seeds the Movie table with data.
         modelBuilder.Entity<Movie>().HasData(
             new Movie
             {
@@ -53,6 +65,7 @@ public class FilmDbContext : DbContext
                 Picture = null, Trailer = null, FranchiseId = 1,
             }
         );
+        // Seeds the Franchise table with data.
         modelBuilder.Entity<Franchise>().HasData(
             new Franchise
             {
@@ -64,7 +77,7 @@ public class FilmDbContext : DbContext
             }
         );
 
-        /*-------------------------------- ADD CHARACTER SECTION START ---------------------------------*/
+        // Seeds the Character table with data. 
         modelBuilder.Entity<Character>().HasData(
             new Character
             {
@@ -83,26 +96,23 @@ public class FilmDbContext : DbContext
                 Picture = null
             }
         );
-        /*-------------------------------- ADD CHARACTER SECTION END -----------------------------------*/
 
-        /*------------------ ESTABLISH RELATION BETWEEN MOVIES AND CHARS START -------------------------------*/
+        //seeds the CharacterMovie table with data. 
         modelBuilder.Entity<Character>()
-                .HasMany(chr => chr.Movies)
-                .WithMany(movie => movie.Characters)
-                .UsingEntity<Dictionary<string, object>>(
-                    "CharacterMovie",
-                    l => l.HasOne<Movie>().WithMany().HasForeignKey("MovieId"),
-                    r => r.HasOne<Character>().WithMany().HasForeignKey("CharacterId"),
-                    je =>
-                    {
-                        je.HasKey("CharacterId", "MovieId");
-                        je.HasData(
-                            new { CharacterId = 1, MovieId= 1 },
-                            new { CharacterId = 2, MovieId = 4 }
-                            );
-                    }
-                );
-        /*------------------ ESTABLISH RELATION BETWEEN MOVIES AND CHARS END -------------------------------**/
-
+            .HasMany(chr => chr.Movies)
+            .WithMany(movie => movie.Characters)
+            .UsingEntity<Dictionary<string, object>>(
+                "CharacterMovie",
+                l => l.HasOne<Movie>().WithMany().HasForeignKey("MovieId"),
+                r => r.HasOne<Character>().WithMany().HasForeignKey("CharacterId"),
+                je =>
+                {
+                    je.HasKey("CharacterId", "MovieId");
+                    je.HasData(
+                        new { CharacterId = 1, MovieId = 1 },
+                        new { CharacterId = 2, MovieId = 4 }
+                    );
+                }
+            );
     }
 }
