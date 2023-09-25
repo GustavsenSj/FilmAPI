@@ -1,5 +1,3 @@
-using FilmAPI.Data.Models;
-
 namespace FilmAPI.Services.Movie;
 
 public interface IMovieService: ICrudService<Data.Models.Movie, int>
