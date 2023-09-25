@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace FilmAPI.Controllers;
 
+/// <summary>
+/// Controller for Movie
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 [Produces(MediaTypeNames.Application.Json)]
@@ -14,6 +17,10 @@ public class MovieController : ControllerBase
 {
     private readonly IMovieService _service;
 
+    /// <summary>
+    /// Constructor for MovieController
+    /// </summary>
+    /// <param name="service"></param>
     public MovieController(IMovieService service)
     {
         _service = service;
@@ -30,4 +37,15 @@ public class MovieController : ControllerBase
         //TODO: create exception to catch not found
     }
     
+    /// <summary>
+    /// Get a movie by its id
+    /// </summary>
+    /// <param name="id"> The id of the movie to get</param>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Movie>> GetMovieById(int id)
+    {
+        var movie = await _service.GetByIdAsync(id);
+        return Ok(movie);
+    }
 }
