@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FilmAPI.Data;
 using FilmAPI.Data.Models;
+using FilmAPI.Services.Character;
+using AutoMapper;
+using FilmAPI.Data.DTOs;
+using System.Data;
 
 namespace FilmAPI.Controllers
 {
@@ -14,111 +18,87 @@ namespace FilmAPI.Controllers
     [ApiController]
     public class CharactersController : ControllerBase
     {
-        private readonly FilmDbContext _context;
+        //private readonly FilmDbContext _context;
+        private readonly ICharacterService _characterService;
+        private readonly IMapper _mapper;
 
-        public CharactersController(FilmDbContext context)
+        public CharactersController(ICharacterService characterService, IMapper mapper)
         {
-            _context = context;
+            _characterService = characterService;
+            _mapper = mapper;
         }
 
         // GET: api/Characters
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
+        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
         {
-            if (_context.Characters == null)
-            {
-                return NotFound();
-            }
-            return await _context.Characters.ToListAsync();
+            // prob add try catch here
+            // not possible assigning type to Models.Character & DTOs.CharacterDto
+
+            // Get all chrs from service
+            var characters = await _characterService.GetAllAsync();
+
+            //map chrs->chrDto objs
+            var characterDtos = _mapper.Map<IEnumerable<CharacterDto>>(characters);
+
+            // return mappd chrsDtos as resp.
+            return Ok(characterDtos);
         }
 
         // GET: api/Characters/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Character>> GetCharacter(int id)
+        public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
         {
-            if (_context.Characters == null)
+            // if not found (null character)
+            if (await _characterService.GetByIdAsync(id) == null)
             {
-                return NotFound();
-            }
-            var character = await _context.Characters.FindAsync(id);
-
-            if (character == null)
-            {
-                return NotFound($"Couldn't find character with ID {id}.");
+                return NotFound(); //404
             }
 
-            return character;
+            // map chr->chrDto
+            var character = await _characterService.GetByIdAsync(id);
+
+            // mapped chrDto as resp.
+            var characterDto = _mapper.Map<CharacterDto>(character);
+            return Ok(characterDto);
         }
 
         // PUT: api/Characters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCharacter(int id, Character character)
+        public async Task<ActionResult> UpdateCharacter(int id, CharacterDto characterDto)
         {
-            if (id != character.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(character).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CharacterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            // chrDto -> chr entity
+            var character = _mapper.Map<Character>(characterDto);
+            //update chr in db
+            await _characterService.UpdateAsync(character);
+            return Ok(character);
         }
 
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Character>> PostCharacter(Character character)
+        public async Task<ActionResult<CharacterDto>> AddCharacter(Character characterDto)
         {
-            if (_context.Characters == null)
-            {
-                return Problem("Entity set 'FilmDbContext.Characters'  is null.");
-            }
-            _context.Characters.Add(character);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCharacter", new { id = character.Id }, character);
+            // chrDto -> chr entity
+            var character = _mapper.Map<Character>(characterDto);
+            // post it to db
+            var addedCharacter = await _characterService.AddAsync(character);
+            // map back to dto
+            var addedCharacterDto = _mapper.Map<CharacterDto>(addedCharacter);
+            return CreatedAtAction(nameof(GetCharacter), new { id = addedCharacterDto.Id }, addedCharacterDto);
         }
 
         // DELETE: api/Characters/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)
         {
-            if (_context.Characters == null)
+            if (await _characterService.GetByIdAsync(id) != null)
             {
-                return NotFound();
+                await _characterService.DeleteAsync(id);
+                return NoContent();
             }
-            var character = await _context.Characters.FindAsync(id);
-            if (character == null)
-            {
-                return NotFound();
-            }
-
-            _context.Characters.Remove(character);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CharacterExists(int id)
-        {
-            return (_context.Characters?.Any(e => e.Id == id)).GetValueOrDefault();
+            return NotFound();
         }
     }
 }

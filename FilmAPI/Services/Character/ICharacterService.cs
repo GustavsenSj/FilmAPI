@@ -1,6 +1,8 @@
-﻿namespace FilmAPI.Services.Character
+﻿using FilmAPI.Data.Models;
+
+namespace FilmAPI.Services.Character
 {
-    public interface ICharacterService
+    public interface ICharacterService: ICrudService<Data.Models.Character, int>
     {
     }
 }

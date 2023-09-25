@@ -7,6 +7,6 @@
         public string Alias { get; set; }
         public string Gender { get; set; }
         public string? Picture { get; set; }
-        public ICollection<MovieDto> Movies { get; set; }
+        public List<MovieDto> Movies { get; set; } = new List<MovieDto>();
     }
 }
