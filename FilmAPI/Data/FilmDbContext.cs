@@ -5,6 +5,10 @@ namespace FilmAPI.Data;
 
 public class FilmDbContext : DbContext
 {
+    public FilmDbContext(DbContextOptions<FilmDbContext> options) : base(options)
+    {
+    }
+
     public DbSet<Character> Characters { get; set; } = null!;
     public DbSet<Movie> Movies { get; set; } = null!;
     public DbSet<Franchise> Franchises { get; set; } = null!;
@@ -92,8 +96,8 @@ public class FilmDbContext : DbContext
                 Picture = null
             }
         );
-        
-       //seeds the CharacterMovie table with data. 
+
+        //seeds the CharacterMovie table with data. 
         modelBuilder.Entity<Character>()
             .HasMany(chr => chr.Movies)
             .WithMany(movie => movie.Characters)
