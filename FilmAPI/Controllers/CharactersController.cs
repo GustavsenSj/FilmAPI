@@ -6,6 +6,9 @@ using FilmAPI.Services.Character;
 using AutoMapper;
 using FilmAPI.Data.DTOs;
 using System.Data;
+using FilmAPI.Data.Exceptions;
+using FilmAPI.Data.DTOs.Movies;
+using FilmAPI.Data.DTOs.Characters;
 
 namespace FilmAPI.Controllers
 {
@@ -23,6 +26,7 @@ namespace FilmAPI.Controllers
             _mapper = mapper;
         }
 
+        /**************************************************************************************/
         // GET: api/Characters
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
@@ -40,60 +44,101 @@ namespace FilmAPI.Controllers
             return Ok(characterDtos);
         }
 
+        /**************************************************************************************/
         // GET: api/Characters/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
         {
-            // if not found (null character)
-            if (await _characterService.GetByIdAsync(id) == null)
+            try
             {
-                return NotFound(); //404
+                var character = await _characterService.GetByIdAsync(id);
+                var characterDto = _mapper.Map<CharacterDto>(character);
+                return Ok(characterDto);
             }
-
-            // map chr->chrDto
-            var character = await _characterService.GetByIdAsync(id);
-
-            // mapped chrDto as resp.
-            var characterDto = _mapper.Map<CharacterDto>(character);
-            return Ok(characterDto);
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
+        /**************************************************************************************/
         // PUT: api/Characters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCharacter(int id, CharacterDto characterDto)
+        public async Task<ActionResult> UpdateCharacter(int id, CharacterUpdateDto characterDto)
         {
-            // chrDto -> chr entity
-            var character = _mapper.Map<Character>(characterDto);
-            //update chr in db
-            await _characterService.UpdateAsync(character);
-            return Ok(character);
+            try
+            {
+                // chrDto -> chr entity
+                var character = _mapper.Map<Character>(characterDto);
+                //update chr in db
+                await _characterService.UpdateAsync(character);
+                return Ok(character);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
+        /**************************************************************************************/
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CharacterDto>> AddCharacter(Character characterDto)
+        public async Task<ActionResult<CharacterDto>> AddCharacter(CharactersAddDto characterDto)
         {
             // chrDto -> chr entity
             var character = _mapper.Map<Character>(characterDto);
-            // post it to db
-            var addedCharacter = await _characterService.AddAsync(character);
-            // map back to dto
-            var addedCharacterDto = _mapper.Map<CharacterDto>(addedCharacter);
-            return CreatedAtAction(nameof(GetCharacter), new { id = addedCharacterDto.Id }, addedCharacterDto);
+            try
+            {
+                // post it to db
+                var addedCharacter = await _characterService.AddAsync(character);
+                // map back to dto
+                var addedCharacterDto = _mapper.Map<CharacterDto>(addedCharacter);
+                return CreatedAtAction(nameof(GetCharacter), 
+                    new { id = addedCharacterDto.Id }, 
+                    addedCharacterDto);
+            }
+            catch (EntityAlreadyExistsException ex)
+            {
+                // from stackoverflow, status code 409
+                // see https://stackoverflow.com/questions/3825990/http-response-code-for-post-when-resource-already-exists
+                return Conflict(ex.Message); 
+            }
         }
 
+        /**************************************************************************************/
         // DELETE: api/Characters/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)
         {
-            if (await _characterService.GetByIdAsync(id) != null)
+            // catch the entitynotfound excpetion from the service layer
+            try
             {
                 await _characterService.DeleteAsync(id);
                 return NoContent();
             }
-            return NotFound();
+            catch (EntityNotFoundException ex) 
+            { 
+                return NotFound(ex.Message);
+            }
         }
+
+        /**************************************************************************************/
+        [HttpGet("{id}/movies")]
+        public async Task<ActionResult<IEnumerable<MovieDto>>> GetCharacterInMovies(int id)
+        {
+            try
+            {
+                var movies = await _characterService.GetCharacterInMoviesAsync(id);
+                // map to dtos
+                var moviesDto = _mapper.Map<IEnumerable<MovieDto>>(movies);
+                return Ok(moviesDto);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }   
     }
 }

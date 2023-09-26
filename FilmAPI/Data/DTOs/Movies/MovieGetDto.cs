@@ -9,5 +9,5 @@ public class MovieGetDto
     public string Director { get; set; }
     public string? Picture { get; set; }
     public string? Trailer { get; set; }
-    public ICollection<CharacterInMovieDto> Characters { get; set; }
+    public ICollection<CharacterInMoviesDto> Characters { get; set; }
 }
