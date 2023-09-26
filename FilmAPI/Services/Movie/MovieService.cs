@@ -30,9 +30,8 @@ public class MovieService : IMovieService
     /// <inheritdoc />
     public async Task<Data.Models.Movie> GetByIdAsync(int id)
     {
-        //TODO: include characters
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).FirstOrDefaultAsync() ?? null) ??
+        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).Include(m=> m.Characters). FirstOrDefaultAsync() ?? null) ??
                                   throw new EntityNotFoundException(id);
         return movie;
     }

@@ -25,7 +25,8 @@ public class MovieProfile : Profile
             options => options.MapFrom(
                 movie => movie.Characters.Select(character => new CharacterNameInMovieDto
                 {
-                    FullName = character.FullName
+                    FullName = character.FullName,
+                    Alias = character.Alias
                 }).ToList()
             )
         );

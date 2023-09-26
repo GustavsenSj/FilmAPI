@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Net.Mime;
 using AutoMapper;
 using FilmAPI.Data.DTOs;
 using FilmAPI.Data.DTOs.Movies;
@@ -7,7 +5,6 @@ using FilmAPI.Data.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Movie;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace FilmAPI.Controllers;
 
@@ -52,8 +49,16 @@ public class MovieController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Movie>> GetMovieById(int id)
     {
+        //TODO: Add a NotFound exception
         var movie = await _service.GetByIdAsync(id);
-        return Ok(movie);
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var movieDto = _mapper.Map<MovieGetDto>(movie);
+
+        return Ok(movieDto);
     }
 
     /// <summary>
@@ -148,8 +153,8 @@ public class MovieController : ControllerBase
         try
         {
             return Ok(_mapper.Map<IEnumerable<CharacterInMovieDto>>(
-            await _service.GetCharactersForMovieAsync(id))
-        );
+                await _service.GetCharactersForMovieAsync(id))
+            );
         }
         catch (EntityNotFoundException e)
         {
