@@ -23,11 +23,12 @@ public class MovieProfile : Profile
         .ForMember(
             mdto => mdto.Characters,
             options => options.MapFrom(
-                movie => movie.Characters.Select(character => new CharacterInMovieDto
+                movie => movie.Characters.Select(character => new CharacterNameInMovieDto
                 {
                     FullName = character.FullName
                 }).ToList()
             )
         );
+
     }
 }

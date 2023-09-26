@@ -11,7 +11,8 @@ namespace FilmAPI.MappingProfiles
             // chr <-> chrDto
             CreateMap<Character, CharacterDto>();
             CreateMap<CharacterDto, Character>();
-            CreateMap<CharacterInMovieDto, CharacterDto>();
+            CreateMap<CharacterNameInMovieDto, CharacterDto>();
+            CreateMap<Character, CharacterInMovieDto>();
         }
     }
 }
