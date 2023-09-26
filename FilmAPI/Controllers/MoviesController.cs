@@ -19,6 +19,11 @@ public class MovieController : ControllerBase
     private readonly IMovieService _service;
     private readonly IMapper _mapper;
 
+    /// <summary>
+    /// Constructor for MovieController
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="mapper"></param>
     public MovieController(IMovieService service, IMapper mapper)
     {
         _service = service;
@@ -48,6 +53,11 @@ public class MovieController : ControllerBase
         return Ok(movie);
     }
 
+    /// <summary>
+    /// Create a new movie in the database 
+    /// </summary>
+    /// <param name="movie">The movie to be added</param>
+    /// <returns> The created movie Entity</returns>
     [HttpPost]
     public async Task<ActionResult<MoviePostDTO>> PostMovie(MoviePostDTO movie)
     {

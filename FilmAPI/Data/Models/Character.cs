@@ -16,10 +16,7 @@ namespace FilmAPI.Data.Models
         public string Gender { get; set; } = null!;
         public string? Picture { get; set; } // Can be nullable
 
-
-        /*--------------------------Movie relation stuff------------------------------*/
         // Associated movies for character nav prop
         public ICollection<Movie> Movies { get; set; } = new List<Movie>();
-        /*----------------------------------------------------------------------------*/
     }
 }
