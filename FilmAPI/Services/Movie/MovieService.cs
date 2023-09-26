@@ -23,7 +23,7 @@ public class MovieService : IMovieService
     /// <inheritdoc />
     public async Task<IEnumerable<Data.Models.Movie>> GetAllAsync()
     {
-        return await _context.Movies.ToListAsync();
+        return await _context.Movies.Include(m => m.Characters).ToListAsync();
     }
 
 
@@ -46,7 +46,7 @@ public class MovieService : IMovieService
     /// <inheritdoc />
     public async Task<Data.Models.Movie> UpdateAsync(Data.Models.Movie obj)
     {
-        if (! await MovieExistsAsync(obj.Id))
+        if (!await MovieExistsAsync(obj.Id))
             throw new EntityNotFoundException(obj.Id);
         obj.Characters.Clear();
         obj.Franchise = null;
@@ -73,21 +73,42 @@ public class MovieService : IMovieService
         await _context.SaveChangesAsync();
     }
 
-    public Task AddCharacterToMovieAsync(int movieId, int characterId)
+    /// <inheritdoc />
+    public async Task UpdateCharacterInMovieAsync(int movieId, int[] charactersId)
     {
-        throw new NotImplementedException();
+        if (movieId <= 0) throw new ArgumentOutOfRangeException(nameof(movieId));
+        if (!await MovieExistsAsync(movieId))
+            throw new EntityNotFoundException(movieId);
+
+        Data.Models.Movie movie = await _context.Movies.FindAsync(movieId) ??
+                                  throw new EntityNotFoundException(movieId);
+
+        List<Data.Models.Character> characters = new List<Data.Models.Character>();
+        foreach (int id in charactersId)
+        {
+            if (!await CharacterExists(id))
+                throw new EntityNotFoundException(id);
+            characters.Add((await _context.Characters.FindAsync(id))!);
+        }
+            
+
+        movie.Characters = characters;
+        await _context.SaveChangesAsync();
     }
 
+
+    /// <inheritdoc />
     public Task<ICollection<Data.Models.Character>> GetCharactersForMovieAsync(int movieId)
     {
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public Task AddFranchiseToMovieAsync(int movieId, int franchiseId)
     {
         throw new NotImplementedException();
     }
-    
+
     /// <summary>
     /// Check if a movie exists in the database
     /// </summary>
@@ -96,5 +117,9 @@ public class MovieService : IMovieService
     private async Task<bool> MovieExistsAsync(object id)
     {
         return await _context.Movies.AnyAsync(e => e.Id == (int)id);
+    }
+    private async Task<bool> CharacterExists(int id)
+    {
+        return await _context.Characters.AnyAsync(e => e.Id == id);
     }
 }

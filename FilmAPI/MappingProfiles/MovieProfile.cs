@@ -1,4 +1,5 @@
 using AutoMapper;
+using FilmAPI.Data.DTOs;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Models;
 
@@ -17,5 +18,16 @@ public class MovieProfile : Profile
         // mov <-> movDto
         CreateMap<Movie, MoviePostDto>().ReverseMap();
         CreateMap<Movie, MoviePutDto>().ReverseMap();
+
+         CreateMap<Movie, MovieGetDto>()
+        .ForMember(
+            mdto => mdto.Characters,
+            options => options.MapFrom(
+                movie => movie.Characters.Select(character => new CharacterInMovieDto
+                {
+                    FullName = character.FullName
+                }).ToList()
+            )
+        );
     }
 }

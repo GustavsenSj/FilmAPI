@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Net.Mime;
 using AutoMapper;
 using FilmAPI.Data.DTOs;
@@ -38,8 +39,10 @@ public class MovieController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
     {
-        return Ok(await _service.GetAllAsync());
-        //TODO: create exception to catch not found
+        return Ok(_mapper.Map<IEnumerable<MovieGetDto>>(
+            await _service.GetAllAsync())
+        );
+
     }
     
     /// <summary>
@@ -72,6 +75,7 @@ public class MovieController : ControllerBase
     /// <param name="id"> The id of the movie you want to update</param>
     /// <param name="movie">the movie entity you want to insert</param>
     /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
     [HttpPut]
     public async Task<ActionResult<MoviePutDto>> PutMovie(int id, MoviePutDto movie)
     {
@@ -93,6 +97,7 @@ public class MovieController : ControllerBase
     /// </summary>
     /// <param name="id">Id of the movie you want to delete</param>
     /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMovie(int id)
     {
@@ -107,5 +112,29 @@ public class MovieController : ControllerBase
         }
     }
     
+    /// <summary>
+    /// Add a list of characters to a movie 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="characterIds"></param>
+    /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
+    [HttpPut("{id}/characters")]
+    public async Task<IActionResult> UpdateCharacters(int id, [FromBody] int[] characterIds)
+    {
+        try
+        {
+            await _service.UpdateCharacterInMovieAsync(id, characterIds);
+            return Ok();
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        // catch (EntityValidationException e)
+        // {
+        //     return BadRequest(e.Message);
+        // }
+    }
 }
 

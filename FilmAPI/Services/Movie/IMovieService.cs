@@ -1,3 +1,5 @@
+using FilmAPI.Data.Exceptions;
+
 namespace FilmAPI.Services.Movie;
 
 /// <summary>
@@ -5,13 +7,15 @@ namespace FilmAPI.Services.Movie;
 /// </summary>
 public interface IMovieService: ICrudService<Data.Models.Movie, int>
 {
-   /// <summary>
-   /// Adds a character to a movie.
-   /// </summary>
-   /// <param name="movieId">The id of the movie to add a character to</param>
-   /// <param name="characterId">The id of the character to be added</param>
-   /// <returns></returns>
-   Task AddCharacterToMovieAsync(int movieId, int characterId);
+    /// <summary>
+    /// Add a list of characters to a movie
+    /// </summary>
+    /// <param name="movieId">The move to add the characters to</param>
+    /// <param name="charactersId"> A list of characters ID</param>
+    /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+   Task UpdateCharacterInMovieAsync(int movieId, int[] charactersId);
    
    /// <summary>
    ///  Gets all the characters for the specified movie.

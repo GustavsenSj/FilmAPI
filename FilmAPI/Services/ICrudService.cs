@@ -1,3 +1,5 @@
+using FilmAPI.Data.Exceptions;
+
 namespace FilmAPI.Services;
 
 public interface ICrudService <T, ID>
@@ -15,6 +17,7 @@ public interface ICrudService <T, ID>
     /// exception cref="ArgumentOutOfRangeException">
     /// exception cref="EntityNotFoundException">
     /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
     Task<T> GetByIdAsync(ID id);
     
     /// <summary>
@@ -22,6 +25,7 @@ public interface ICrudService <T, ID>
     /// </summary>
     /// <param name="t"> The instance of <typeparamref name="T"/> to add</param>
     /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
     Task<T> AddAsync(T t);
     
     /// <summary>
@@ -29,6 +33,7 @@ public interface ICrudService <T, ID>
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
     Task<T> UpdateAsync(T t);
     
     /// <summary>
@@ -36,5 +41,6 @@ public interface ICrudService <T, ID>
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
     Task DeleteAsync(ID id);
 }
