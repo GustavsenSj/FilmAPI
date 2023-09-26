@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace FilmAPI.Data.DTOs.Movies;
 
 /// <summary>
-/// This is the DTO used for POSTing a new movie.
+/// This is the DTO used for PUTing/updating a new movie.
 /// </summary>
-public class MoviePostDto
+public class MoviePutDto
 {
+    public int Id { get; set; }
     [StringLength(201)] 
     public string Title { get; set; } = null!;
     [StringLength(50)] 

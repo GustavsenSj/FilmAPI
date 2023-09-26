@@ -1,4 +1,6 @@
-﻿namespace FilmAPI.Data.DTOs
+﻿using FilmAPI.Data.DTOs.Movies;
+
+namespace FilmAPI.Data.DTOs
 {
     public class CharacterDto
     {

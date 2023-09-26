@@ -2,6 +2,7 @@ using System.Net.Mime;
 using AutoMapper;
 using FilmAPI.Data.DTOs;
 using FilmAPI.Data.DTOs.Movies;
+using FilmAPI.Data.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Movie;
@@ -59,9 +60,25 @@ public class MovieController : ControllerBase
     /// <param name="movie">The movie to be added</param>
     /// <returns> The created movie Entity</returns>
     [HttpPost]
-    public async Task<ActionResult<MoviePostDTO>> PostMovie(MoviePostDTO movie)
+    public async Task<ActionResult<MoviePostDto>> PostMovie(MoviePostDto movie)
     {
         var newMovie = await _service.AddAsync(_mapper.Map<Movie>(movie));
         return CreatedAtAction("GetMovieById", new {id = newMovie.Id}, newMovie);
     }
+    [HttpPut]
+    public async Task<ActionResult<MoviePutDto>> PutMovie(int id, MoviePutDto movie)
+    {
+        if(id != movie.Id)
+            return BadRequest();
+        try
+        {
+            var newMovie = await _service.UpdateAsync(_mapper.Map<Movie>(movie));
+            return Ok(newMovie);
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
 }
+

@@ -15,7 +15,7 @@ public class MovieProfile : Profile
     public MovieProfile()
     {
         // mov <-> movDto
-        CreateMap<Movie, MoviePostDTO>().ReverseMap();
-        
+        CreateMap<Movie, MoviePostDto>().ReverseMap();
+        CreateMap<Movie, MoviePutDto>().ReverseMap();
     }
 }

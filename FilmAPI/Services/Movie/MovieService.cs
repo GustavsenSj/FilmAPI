@@ -44,10 +44,17 @@ public class MovieService : IMovieService
     }
 
     /// <inheritdoc />
-    public Task<Data.Models.Movie> UpdateAsync(Data.Models.Movie t)
+    public async Task<Data.Models.Movie> UpdateAsync(Data.Models.Movie obj)
     {
-        throw new NotImplementedException();
+        if (! await MovieExistsAsync(obj.Id))
+            throw new EntityNotFoundException(obj.Id);
+        obj.Characters.Clear();
+        obj.Franchise = null;
+        _context.Entry(obj).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return obj;
     }
+
 
     /// <inheritdoc />
     public Task<Data.Models.Movie> DeleteAsync(int id)
@@ -68,5 +75,15 @@ public class MovieService : IMovieService
     public Task AddFranchiseToMovieAsync(int movieId, int franchiseId)
     {
         throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// Check if a movie exists in the database
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    private async Task<bool> MovieExistsAsync(object id)
+    {
+        return await _context.Movies.AnyAsync(e => e.Id == (int)id);
     }
 }
