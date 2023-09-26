@@ -57,9 +57,20 @@ public class MovieService : IMovieService
 
 
     /// <inheritdoc />
-    public Task<Data.Models.Movie> DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        if (!await MovieExistsAsync(id))
+            throw new EntityNotFoundException(id);
+        var movie = await _context.Movies.FindAsync(id);
+
+        if (movie != null)
+        {
+            movie.Characters.Clear();
+            movie.Franchise = null;
+            _context.Movies.Remove(movie);
+        }
+
+        await _context.SaveChangesAsync();
     }
 
     public Task AddCharacterToMovieAsync(int movieId, int characterId)

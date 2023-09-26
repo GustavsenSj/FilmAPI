@@ -65,6 +65,13 @@ public class MovieController : ControllerBase
         var newMovie = await _service.AddAsync(_mapper.Map<Movie>(movie));
         return CreatedAtAction("GetMovieById", new {id = newMovie.Id}, newMovie);
     }
+    
+    /// <summary>
+    /// Update an existing movie in the database 
+    /// </summary>
+    /// <param name="id"> The id of the movie you want to update</param>
+    /// <param name="movie">the movie entity you want to insert</param>
+    /// <returns></returns>
     [HttpPut]
     public async Task<ActionResult<MoviePutDto>> PutMovie(int id, MoviePutDto movie)
     {
@@ -80,5 +87,25 @@ public class MovieController : ControllerBase
             return NotFound(e.Message);
         }
     }
+    
+    /// <summary>
+    /// Delete a movie from the database
+    /// </summary>
+    /// <param name="id">Id of the movie you want to delete</param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMovie(int id)
+    {
+        try
+        {
+            await _service.DeleteAsync(id);
+            return Ok();
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+    
 }
 

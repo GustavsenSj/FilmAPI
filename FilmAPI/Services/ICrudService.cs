@@ -36,5 +36,5 @@ public interface ICrudService <T, ID>
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<T> DeleteAsync(ID id);
+    Task DeleteAsync(ID id);
 }

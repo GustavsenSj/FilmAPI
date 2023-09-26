@@ -41,7 +41,7 @@ namespace FilmAPI.Services.Character
             return character;
 
         }
-        public async Task<Data.Models.Character> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             // Likely have to add try/catch here for triying to delete non existant character
             Data.Models.Character character = await _context.Characters.FindAsync(id);
@@ -50,7 +50,7 @@ namespace FilmAPI.Services.Character
                 _context.Characters.Remove(character);
                 await _context.SaveChangesAsync();
             }
-            return character;
+            
         }
 
     }
