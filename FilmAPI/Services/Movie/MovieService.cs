@@ -31,7 +31,8 @@ public class MovieService : IMovieService
     public async Task<Data.Models.Movie> GetByIdAsync(int id)
     {
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).FirstOrDefaultAsync() ?? null) ?? throw new EntityNotFoundException(id);
+        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).Include(m=> m.Characters). FirstOrDefaultAsync() ?? null) ??
+                                  throw new EntityNotFoundException(id);
         return movie;
     }
 
@@ -90,7 +91,7 @@ public class MovieService : IMovieService
                 throw new EntityNotFoundException(id);
             characters.Add((await _context.Characters.FindAsync(id))!);
         }
-            
+
 
         movie.Characters = characters;
         await _context.SaveChangesAsync();
@@ -98,9 +99,12 @@ public class MovieService : IMovieService
 
 
     /// <inheritdoc />
-    public Task<ICollection<Data.Models.Character>> GetCharactersForMovieAsync(int movieId)
+    public async Task<ICollection<Data.Models.Character>> GetCharactersForMovieAsync(int movieId)
     {
-        throw new NotImplementedException();
+        if (movieId <= 0) throw new ArgumentOutOfRangeException(nameof(movieId));
+        if (!await MovieExistsAsync(movieId))
+            throw new EntityNotFoundException(movieId);
+        return await _context.Movies.Where(m => m.Id == movieId).SelectMany(m => m.Characters).ToListAsync();
     }
 
     /// <inheritdoc />
@@ -118,6 +122,12 @@ public class MovieService : IMovieService
     {
         return await _context.Movies.AnyAsync(e => e.Id == (int)id);
     }
+
+    /// <summary>
+    /// Check if a character exists in the database
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     private async Task<bool> CharacterExists(int id)
     {
         return await _context.Characters.AnyAsync(e => e.Id == id);

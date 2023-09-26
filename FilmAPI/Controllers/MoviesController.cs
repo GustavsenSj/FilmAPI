@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Net.Mime;
 using AutoMapper;
 using FilmAPI.Data.DTOs;
+using FilmAPI.Data.Dtos.Characters;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Movie;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace FilmAPI.Controllers;
 
@@ -42,9 +40,8 @@ public class MovieController : ControllerBase
         return Ok(_mapper.Map<IEnumerable<MovieGetDto>>(
             await _service.GetAllAsync())
         );
-
     }
-    
+
     /// <summary>
     /// Get a movie by its id
     /// </summary>
@@ -54,7 +51,14 @@ public class MovieController : ControllerBase
     public async Task<ActionResult<Movie>> GetMovieById(int id)
     {
         var movie = await _service.GetByIdAsync(id);
-        return Ok(movie);
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var movieDto = _mapper.Map<MovieGetDto>(movie);
+
+        return Ok(movieDto);
     }
 
     /// <summary>
@@ -66,9 +70,9 @@ public class MovieController : ControllerBase
     public async Task<ActionResult<MoviePostDto>> PostMovie(MoviePostDto movie)
     {
         var newMovie = await _service.AddAsync(_mapper.Map<Movie>(movie));
-        return CreatedAtAction("GetMovieById", new {id = newMovie.Id}, newMovie);
+        return CreatedAtAction("GetMovieById", new { id = newMovie.Id }, newMovie);
     }
-    
+
     /// <summary>
     /// Update an existing movie in the database 
     /// </summary>
@@ -79,7 +83,7 @@ public class MovieController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<MoviePutDto>> PutMovie(int id, MoviePutDto movie)
     {
-        if(id != movie.Id)
+        if (id != movie.Id)
             return BadRequest();
         try
         {
@@ -91,7 +95,7 @@ public class MovieController : ControllerBase
             return NotFound(e.Message);
         }
     }
-    
+
     /// <summary>
     /// Delete a movie from the database
     /// </summary>
@@ -111,7 +115,7 @@ public class MovieController : ControllerBase
             return NotFound(e.Message);
         }
     }
-    
+
     /// <summary>
     /// Add a list of characters to a movie 
     /// </summary>
@@ -136,5 +140,25 @@ public class MovieController : ControllerBase
         //     return BadRequest(e.Message);
         // }
     }
-}
 
+    /// <summary>
+    /// Get all characters for a movie
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
+    [HttpGet("{id}/characters")]
+    public async Task<IActionResult> GetCharacters(int id)
+    {
+        try
+        {
+            return Ok(_mapper.Map<IEnumerable<CharacterInMovieDto>>(
+                await _service.GetCharactersForMovieAsync(id))
+            );
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+}
