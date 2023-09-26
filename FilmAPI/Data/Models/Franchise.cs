@@ -1,8 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace FilmAPI.Data.Models
 {
+    /// <summary>
+    /// The Franchise class is a model class that represents a franchise of movies.
+    /// </summary>
     public class Franchise
     {
         [Key]

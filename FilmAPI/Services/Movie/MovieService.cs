@@ -123,6 +123,11 @@ public class MovieService : IMovieService
         return await _context.Movies.AnyAsync(e => e.Id == (int)id);
     }
 
+    /// <summary>
+    /// Check if a character exists in the database
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     private async Task<bool> CharacterExists(int id)
     {
         return await _context.Characters.AnyAsync(e => e.Id == id);

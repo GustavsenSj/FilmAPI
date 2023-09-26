@@ -6,3 +6,5 @@ riderModule.iml
 .idea/.idea.FilmAPI/.idea/
 
 FilmAPI/appsettings.json
+
+*.user

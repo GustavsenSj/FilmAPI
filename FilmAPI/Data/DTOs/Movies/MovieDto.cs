@@ -1,13 +1,19 @@
+using FilmAPI.Data.Dtos.Characters;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace FilmAPI.Data.DTOs.Movies;
 
+/// <summary>
+/// MovieDto is a DTO for Movie objects.
+/// </summary>
 public class MovieDto
 {
     public int Id { get; set; }
-    public string Title { get; set; }
-    public string Genre { get; set; }
+    public string Title { get; set; } = null!;
+    public string Genre { get; set; } =null!;
     public int ReleaseYear { get; set; }
-    public string Director { get; set; }
+    public string Director { get; set; } =null!;
     public string? Picture { get; set; }
     public string? Trailer { get; set; }
-    public ICollection<CharacterDto> Characters { get; set; }
+    public ICollection<CharacterDto> Characters { get; set; } = null!;
 }

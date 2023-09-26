@@ -1,5 +1,6 @@
 using AutoMapper;
 using FilmAPI.Data.DTOs;
+using FilmAPI.Data.Dtos.Characters;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,6 @@ public class MovieController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Movie>> GetMovieById(int id)
     {
-        //TODO: Add a NotFound exception
         var movie = await _service.GetByIdAsync(id);
         if (movie == null)
         {

@@ -1,5 +1,5 @@
 using AutoMapper;
-using FilmAPI.Data.DTOs;
+using FilmAPI.Data.Dtos.Characters;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Models;
 

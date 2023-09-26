@@ -6,6 +6,7 @@ using FilmAPI.Services.Character;
 using AutoMapper;
 using FilmAPI.Data.DTOs;
 using System.Data;
+using FilmAPI.Data.Dtos.Characters;
 
 namespace FilmAPI.Controllers
 {

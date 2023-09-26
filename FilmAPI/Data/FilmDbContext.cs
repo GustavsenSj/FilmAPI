@@ -1,8 +1,12 @@
 using FilmAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace FilmAPI.Data;
 
+/// <summary>
+/// Film DbContext class that extends the DbContext class. It is used to connect to the database and to seed the database with data. 
+/// </summary>
 public class FilmDbContext : DbContext
 {
     public FilmDbContext(DbContextOptions<FilmDbContext> options) : base(options)
