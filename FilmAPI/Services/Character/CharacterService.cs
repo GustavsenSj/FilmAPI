@@ -87,7 +87,7 @@ namespace FilmAPI.Services.Character
 
         /**************************************************************************************/
         // Get associated movies of a character
-        public async Task <IEnumerable<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
+        public async Task <ICollection<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
         {
             var characterNotNull = await _context.Characters
                 .AnyAsync(chr => chr.Id == characterId);

@@ -9,6 +9,7 @@ using System.Data;
 using FilmAPI.Data.Exceptions;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.DTOs.Characters;
+using FilmAPI.Data.Dtos.Characters;
 
 namespace FilmAPI.Controllers
 {
@@ -67,6 +68,10 @@ namespace FilmAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCharacter(int id, CharacterUpdateDto characterDto)
         {
+            if (id != characterDto.Id)
+            {
+                return BadRequest();
+            }
             try
             {
                 // chrDto -> chr entity
@@ -85,7 +90,7 @@ namespace FilmAPI.Controllers
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CharacterDto>> AddCharacter(CharactersAddDto characterDto)
+        public async Task<ActionResult<CharacterAddDto>> AddCharacter(CharacterAddDto characterDto)
         {
             // chrDto -> chr entity
             var character = _mapper.Map<Character>(characterDto);
@@ -93,10 +98,11 @@ namespace FilmAPI.Controllers
             {
                 // post it to db
                 var addedCharacter = await _characterService.AddAsync(character);
+                int assignedId = addedCharacter.Id;
                 // map back to dto
-                var addedCharacterDto = _mapper.Map<CharacterDto>(addedCharacter);
+                var addedCharacterDto = _mapper.Map<CharacterAddDto>(addedCharacter);
                 return CreatedAtAction(nameof(GetCharacter), 
-                    new { id = addedCharacterDto.Id }, 
+                    new { id = assignedId}, 
                     addedCharacterDto);
             }
             catch (EntityAlreadyExistsException ex)
