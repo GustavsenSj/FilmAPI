@@ -19,15 +19,14 @@ public class Movie
     public string? Picture { get; set; }
     public string? Trailer { get; set; }
 
-    /*---------------------It's characters relation stuff------------------------------*/
+    
     // Nav prop for associated characters played in the movie.
     public ICollection<Character> Characters { get; set; } = new List<Character>();
-    /*---------------------------------------------------------------------------------*/
-
-
-    /*---------------------Franchise relation stuff------------------------------*/
-    public int? FranchiseId { get; set; } // FK for relation with it's possible Franchsie
-
-    public Franchise? Franchise { get; set; } // nav prop for related franchise
-    /*---------------------------------------------------------------------------------*/
+    
+    // FK for relation with it's possible Franchsie
+    public int? FranchiseId { get; set; } 
+    
+    // nav prop for related franchise
+    public Franchise? Franchise { get; set; } 
+    
 }

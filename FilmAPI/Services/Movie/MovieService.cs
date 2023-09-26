@@ -31,14 +31,16 @@ public class MovieService : IMovieService
     public async Task<Data.Models.Movie> GetByIdAsync(int id)
     {
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).FirstOrDefaultAsync() ?? null) ?? throw new EntityNotFoundException(id); 
+        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).FirstOrDefaultAsync() ?? null) ?? throw new EntityNotFoundException(id);
         return movie;
     }
 
     /// <inheritdoc />
-    public Task<Data.Models.Movie> AddAsync(Data.Models.Movie t)
+    public async Task<Data.Models.Movie> AddAsync(Data.Models.Movie obj)
     {
-        throw new NotImplementedException();
+        await _context.Movies.AddAsync(obj);
+        await _context.SaveChangesAsync();
+        return obj;
     }
 
     /// <inheritdoc />

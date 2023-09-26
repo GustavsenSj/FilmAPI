@@ -32,8 +32,10 @@ builder.Services.AddDbContext<FilmDbContext>(options
 
 builder.Services.AddScoped<ICharacterService, CharacterService>();            
 builder.Services.AddScoped<IMovieService, MovieService>();
-var app = builder.Build();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

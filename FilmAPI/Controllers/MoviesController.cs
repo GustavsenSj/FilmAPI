@@ -1,4 +1,7 @@
 using System.Net.Mime;
+using AutoMapper;
+using FilmAPI.Data.DTOs;
+using FilmAPI.Data.DTOs.Movies;
 using Microsoft.AspNetCore.Mvc;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Movie;
@@ -14,10 +17,12 @@ namespace FilmAPI.Controllers;
 public class MovieController : ControllerBase
 {
     private readonly IMovieService _service;
+    private readonly IMapper _mapper;
 
-    public MovieController(IMovieService service)
+    public MovieController(IMovieService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -41,5 +46,12 @@ public class MovieController : ControllerBase
     {
         var movie = await _service.GetByIdAsync(id);
         return Ok(movie);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<MoviePostDTO>> PostMovie(MoviePostDTO movie)
+    {
+        var newMovie = await _service.AddAsync(_mapper.Map<Movie>(movie));
+        return CreatedAtAction("GetMovieById", new {id = newMovie.Id}, newMovie);
     }
 }
