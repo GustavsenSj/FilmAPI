@@ -70,19 +70,19 @@ public class CharactersController : ControllerBase
     }
 
 
-    /// <summary>
-    /// Update a character in the database 
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="characterDto"></param>
-    /// <returns></returns>
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateCharacter(int id, CharacterUpdateDto characterDto)
-    {
-        if (id != characterDto.Id)
+        /// <summary>
+        /// Update a character in the database 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="characterDto"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCharacter(int id, Data.DTOs.Characters.CharacterUpdateDto characterDto)
         {
-            return BadRequest();
-        }
+            if (id != characterDto.Id)
+            {
+                return BadRequest();
+            }
 
         try
         {
@@ -98,55 +98,55 @@ public class CharactersController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Add a character to the database
-    /// </summary>
-    /// <param name="characterDto"></param>
-    /// <returns></returns>
-    [HttpPost]
-    public async Task<ActionResult<CharacterAddDto>> AddCharacter(CharacterAddDto characterDto)
-    {
-        // chrDto -> chr entity
-        var character = _mapper.Map<Character>(characterDto);
-        try
+        /// <summary>
+        /// Add a character to the database
+        /// </summary>
+        /// <param name="characterDto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult<Data.DTOs.Characters.CharacterAddDto>> AddCharacter(Data.DTOs.Characters.CharacterAddDto characterDto)
         {
-            // post it to db
-            var addedCharacter = await _characterService.AddAsync(character);
-            int assignedId = addedCharacter.Id;
-            // map back to dto
-            var addedCharacterDto = _mapper.Map<CharacterAddDto>(addedCharacter);
-            return CreatedAtAction(nameof(GetCharacter),
-                new { id = assignedId },
-                addedCharacterDto);
+            // chrDto -> chr entity
+            var character = _mapper.Map<Character>(characterDto);
+            try
+            {
+                // post it to db
+                var addedCharacter = await _characterService.AddAsync(character);
+                int assignedId = addedCharacter.Id;
+                // map back to dto
+                var addedCharacterDto = _mapper.Map<Data.DTOs.Characters.CharacterAddDto>(addedCharacter);
+                return CreatedAtAction(nameof(GetCharacter),
+                    new { id = assignedId },
+                    addedCharacterDto);
+            }
+            catch (EntityAlreadyExistsException ex)
+            {
+                // from stackoverflow, status code 409
+                // see https://stackoverflow.com/questions/3825990/http-response-code-for-post-when-resource-already-exists
+                return Conflict(ex.Message);
+            }
         }
-        catch (EntityAlreadyExistsException ex)
-        {
-            // from stackoverflow, status code 409
-            // see https://stackoverflow.com/questions/3825990/http-response-code-for-post-when-resource-already-exists
-            return Conflict(ex.Message);
-        }
-    }
 
 
-    /// <summary>
-    /// Delete a character from the database
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCharacter(int id)
-    {
-        // catch the entitynotfound excpetion from the service layer
-        try
+        /// <summary>
+        /// Delete a character from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCharacter(int id)
         {
-            await _characterService.DeleteAsync(id);
-            return Ok(id);
+            // catch the entitynotfound excpetion from the service layer
+            try
+            {
+                await _characterService.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
-        catch (EntityNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
 
     /// <summary>
     /// Get all Characters in a movie 
