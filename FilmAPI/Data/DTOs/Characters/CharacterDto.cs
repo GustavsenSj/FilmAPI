@@ -13,6 +13,6 @@ namespace FilmAPI.Data.Dtos.Characters
         public string Alias { get; set; } = null!;
         public string Gender { get; set; } = null!;
         public string? Picture { get; set; }
-        public List<MovieDto> Movies { get; set; } = null!;
+        public List<MovieInCharacterDto> Movies { get; set; } = null!;
     }
 }

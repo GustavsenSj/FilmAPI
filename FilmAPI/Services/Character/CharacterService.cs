@@ -1,8 +1,5 @@
-﻿using AutoMapper;
 using FilmAPI.Data;
 using FilmAPI.Data.Exceptions;
-using FilmAPI.Data.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.SqlServer.Server;
 
@@ -53,6 +50,7 @@ namespace FilmAPI.Services.Character
                 await _context.SaveChangesAsync();
                 return obj;
             }
+
             throw new EntityAlreadyExistsException(nameof(obj), obj.Id);
         }
 
@@ -68,6 +66,7 @@ namespace FilmAPI.Services.Character
                 await _context.SaveChangesAsync();
                 return obj;
             }
+
             throw new EntityNotFoundException(obj.Id);
         }
 
@@ -79,6 +78,7 @@ namespace FilmAPI.Services.Character
             {
                 throw new EntityNotFoundException(id);
             }
+
             var character = await _context.Characters.FindAsync(id);
 
             character.Movies.Clear();
@@ -99,8 +99,10 @@ namespace FilmAPI.Services.Character
             {
                 return character.Movies.ToList();
             }
+
             throw new EntityNotFoundException(characterId);
         }
+
         /**************************************************************************************/
         public async Task UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds)
         {
