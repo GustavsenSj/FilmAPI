@@ -18,7 +18,7 @@ public class MovieProfile : Profile
         // mov <-> movDto
         CreateMap<Movie, MoviePostDto>().ReverseMap();
         CreateMap<Movie, MoviePutDto>().ReverseMap();
-
+        CreateMap<Movie, MoviesByCharacterDto>();
          CreateMap<Movie, MovieGetDto>()
         .ForMember(
             mdto => mdto.Characters,

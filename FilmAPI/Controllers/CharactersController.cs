@@ -153,7 +153,7 @@ namespace FilmAPI.Controllers
             {
                 var movies = await _characterService.GetCharacterInMoviesAsync(id);
                 // map to dtos
-                var moviesDto = _mapper.Map<IEnumerable<MovieDto>>(movies);
+                var moviesDto = _mapper.Map<IEnumerable<MoviesByCharacterDto>>(movies);
                 return Ok(moviesDto);
             }
             catch (EntityNotFoundException ex)
