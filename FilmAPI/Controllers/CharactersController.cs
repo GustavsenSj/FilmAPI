@@ -6,61 +6,68 @@ using FilmAPI.Data.Dtos.Characters;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Exceptions;
 
-namespace FilmAPI.Controllers
+namespace FilmAPI.Controllers;
+/// <summary>
+///  Controller for the Character entity
+/// </summary>
+[Route("api/[controller]")]
+[ApiController]
+public class CharactersController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CharactersController : ControllerBase
+    //private readonly FilmDbContext _context;
+    private readonly ICharacterService _characterService;
+    private readonly IMapper _mapper;
+
+    /// <summary>
+    /// Constructor for the CharacterController
+    /// </summary>
+    /// <param name="characterService"></param>
+    /// <param name="mapper"></param>
+    public CharactersController(ICharacterService characterService, IMapper mapper)
     {
-        //private readonly FilmDbContext _context;
-        private readonly ICharacterService _characterService;
-        private readonly IMapper _mapper;
+        _characterService = characterService;
+        _mapper = mapper;
+    }
 
-        public CharactersController(ICharacterService characterService, IMapper mapper)
+    /// <summary>
+    /// Get all characters in the database
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
+    {
+        // prob add try catch here
+        // not possible assigning type to Models.Character & DTOs.CharacterDto
+
+        // Get all chrs from service
+        var characters = await _characterService.GetAllAsync();
+
+        //map chrs->chrDto objs
+        var characterDtos = _mapper.Map<IEnumerable<CharacterDto>>(characters);
+
+        // return mappd chrsDtos as resp.
+        return Ok(characterDtos);
+    }
+
+    /// <summary>
+    /// Get a character by its id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
+    {
+        try
         {
-            _characterService = characterService;
-            _mapper = mapper;
+            var character = await _characterService.GetByIdAsync(id);
+            var characterDto = _mapper.Map<CharacterDto>(character);
+            return Ok(characterDto);
         }
-
-        /// <summary>
-        /// Get all characters in the database
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
+        catch (EntityNotFoundException ex)
         {
-            // prob add try catch here
-            // not possible assigning type to Models.Character & DTOs.CharacterDto
-
-            // Get all chrs from service
-            var characters = await _characterService.GetAllAsync();
-
-            //map chrs->chrDto objs
-            var characterDtos = _mapper.Map<IEnumerable<CharacterDto>>(characters);
-
-            // return mappd chrsDtos as resp.
-            return Ok(characterDtos);
+            return NotFound(ex.Message);
         }
-
-        /// <summary>
-        /// Get a character by its id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
-        {
-            try
-            {
-                var character = await _characterService.GetByIdAsync(id);
-                var characterDto = _mapper.Map<CharacterDto>(character);
-                return Ok(characterDto);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
+    }
 
 
         /// <summary>
@@ -77,19 +84,19 @@ namespace FilmAPI.Controllers
                 return BadRequest();
             }
 
-            try
-            {
-                // chrDto -> chr entity
-                var character = _mapper.Map<Character>(characterDto);
-                //update chr in db
-                await _characterService.UpdateAsync(character);
-                return Ok(character);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+        try
+        {
+            // chrDto -> chr entity
+            var character = _mapper.Map<Character>(characterDto);
+            //update chr in db
+            await _characterService.UpdateAsync(character);
+            return Ok(character);
         }
+        catch (EntityNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 
         /// <summary>
         /// Add a character to the database
@@ -141,25 +148,24 @@ namespace FilmAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Get all Characters in a movie 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}/movies")]
-        public async Task<ActionResult<IEnumerable<MovieDto>>> GetCharacterInMovies(int id)
+    /// <summary>
+    /// Get all Characters in a movie 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}/movies")]
+    public async Task<ActionResult<IEnumerable<MovieDto>>> GetCharacterInMovies(int id)
+    {
+        try
         {
-            try
-            {
-                var movies = await _characterService.GetCharacterInMoviesAsync(id);
-                // map to dtos
-                var moviesDto = _mapper.Map<IEnumerable<MoviesByCharacterDto>>(movies);
-                return Ok(moviesDto);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var movies = await _characterService.GetCharacterInMoviesAsync(id);
+            // map to dtos
+            var moviesDto = _mapper.Map<IEnumerable<MoviesByCharacterDto>>(movies);
+            return Ok(moviesDto);
+        }
+        catch (EntityNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
     }
 }
