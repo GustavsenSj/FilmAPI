@@ -3,6 +3,7 @@ using AutoMapper;
 using FilmAPI.Data;
 using FilmAPI.MappingProfiles;
 using FilmAPI.Services.Character;
+using FilmAPI.Services.Franchise;
 using FilmAPI.Services.Movie;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -30,6 +31,7 @@ builder.Services.AddDbContext<FilmDbContext>(options
 
 builder.Services.AddScoped<ICharacterService, CharacterService>();            
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IFranchiseService, FranchiseService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
