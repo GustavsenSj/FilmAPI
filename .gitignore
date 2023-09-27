@@ -9,4 +9,4 @@ riderModule.iml
 FilmAPI/appsettings.json
 
 *.user
-/FilmAPI/MappingProfiles/MovieProfile.cs
+

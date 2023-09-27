@@ -133,7 +133,7 @@ namespace FilmAPI.Controllers
             try
             {
                 await _characterService.DeleteAsync(id);
-                return NoContent();
+                return Ok(id);
             }
             catch (EntityNotFoundException ex)
             {

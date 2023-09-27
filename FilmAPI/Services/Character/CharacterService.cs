@@ -70,8 +70,10 @@ namespace FilmAPI.Services.Character
             throw new EntityNotFoundException(obj.Id);
         }
 
+        
+
         /**************************************************************************************/
-        public async Task<Data.Models.Character> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             // Likely have to add try/catch here for triying to delete non existant character
             if (!await CharacterExistsAsync(id))
@@ -84,7 +86,6 @@ namespace FilmAPI.Services.Character
             character.Movies.Clear();
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
-            return character;
         }
 
         /**************************************************************************************/
@@ -104,7 +105,7 @@ namespace FilmAPI.Services.Character
         }
 
         /**************************************************************************************/
-        public async Task UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds)
+        public async Task<Data.Models.Character> UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds)
         {
             if (!await CharacterExistsAsync(characterId))
             {
@@ -125,6 +126,7 @@ namespace FilmAPI.Services.Character
             }
             character.Movies = movies;
             await _context.SaveChangesAsync();
+            return character;
         }
         /**************************************************************************************/
         //HELPER METHOD
