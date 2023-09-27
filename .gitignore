@@ -4,6 +4,7 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 .idea/.idea.FilmAPI/.idea/
+.vs/
 
 FilmAPI/appsettings.json
 

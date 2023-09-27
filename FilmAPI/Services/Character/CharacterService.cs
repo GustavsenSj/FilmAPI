@@ -4,14 +4,15 @@ using FilmAPI.Data.Exceptions;
 using FilmAPI.Data.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SqlServer.Server;
 
 namespace FilmAPI.Services.Character
 {
-    public class CharacterService: ICharacterService
+    public class CharacterService : ICharacterService
     {
         private readonly FilmDbContext _context;
         //private readonly ICrudService<Data.Models.Character, int> _crudService;
-        
+
         public CharacterService(FilmDbContext context)
         {
             _context = context;
@@ -38,7 +39,7 @@ namespace FilmAPI.Services.Character
                     .FirstAsync(chr => chr.Id == id);
                 return character;
             }
-            throw new EntityNotFoundException(id);           
+            throw new EntityNotFoundException(id);
         }
 
         /**************************************************************************************/
@@ -71,7 +72,7 @@ namespace FilmAPI.Services.Character
         }
 
         /**************************************************************************************/
-        public async Task DeleteAsync(int id)
+        public async Task<Data.Models.Character> DeleteAsync(int id)
         {
             // Likely have to add try/catch here for triying to delete non existant character
             if (!await CharacterExistsAsync(id))
@@ -83,22 +84,45 @@ namespace FilmAPI.Services.Character
             character.Movies.Clear();
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
+            return character;
         }
 
         /**************************************************************************************/
         // Get associated movies of a character
-        public async Task <ICollection<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
+        public async Task<ICollection<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
         {
-            var characterNotNull = await _context.Characters
-                .AnyAsync(chr => chr.Id == characterId);
+            var character = await _context.Characters
+                .Include(chr => chr.Movies)
+                .FirstOrDefaultAsync(chr => chr.Id == characterId);
 
-            if ( characterNotNull )
+            if (character != null)
             {
-                return await _context.Movies
-                    .Where(chr => chr.Id == characterId)
-                    .ToListAsync();
+                return character.Movies.ToList();
             }
             throw new EntityNotFoundException(characterId);
+        }
+        /**************************************************************************************/
+        public async Task UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds)
+        {
+            if (!await CharacterExistsAsync(characterId))
+            {
+                throw new EntityNotFoundException(characterId);
+            }
+            var character = await _context.Characters.FindAsync(characterId);
+            var movies = new List<Data.Models.Movie>();
+
+            foreach (int id in movieIds)
+            {
+                if (!await MovieExistsAsync(id))
+                {
+                    throw new EntityNotFoundException(id);
+                }
+                movies.Add(await _context.Movies
+                    .Where(mov => mov.Id == id)
+                    .FirstAsync());
+            }
+            character.Movies = movies;
+            await _context.SaveChangesAsync();
         }
         /**************************************************************************************/
         //HELPER METHOD
@@ -106,7 +130,10 @@ namespace FilmAPI.Services.Character
         {
             return await _context.Characters.AnyAsync(chr => chr.Id == id);
         }
-
+        private Task<bool> MovieExistsAsync(int movieId)
+        {
+            return _context.Movies.AnyAsync(mov => mov.Id == movieId);
+        } 
 
     }
 }
