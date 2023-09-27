@@ -70,7 +70,7 @@ namespace FilmAPI.Controllers
         /// <param name="characterDto"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCharacter(int id, CharacterUpdateDto characterDto)
+        public async Task<ActionResult> UpdateCharacter(int id, Data.DTOs.Characters.CharacterUpdateDto characterDto)
         {
             if (id != characterDto.Id)
             {
@@ -97,7 +97,7 @@ namespace FilmAPI.Controllers
         /// <param name="characterDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<CharacterAddDto>> AddCharacter(CharacterAddDto characterDto)
+        public async Task<ActionResult<Data.DTOs.Characters.CharacterAddDto>> AddCharacter(Data.DTOs.Characters.CharacterAddDto characterDto)
         {
             // chrDto -> chr entity
             var character = _mapper.Map<Character>(characterDto);
@@ -107,7 +107,7 @@ namespace FilmAPI.Controllers
                 var addedCharacter = await _characterService.AddAsync(character);
                 int assignedId = addedCharacter.Id;
                 // map back to dto
-                var addedCharacterDto = _mapper.Map<CharacterAddDto>(addedCharacter);
+                var addedCharacterDto = _mapper.Map<Data.DTOs.Characters.CharacterAddDto>(addedCharacter);
                 return CreatedAtAction(nameof(GetCharacter),
                     new { id = assignedId },
                     addedCharacterDto);
@@ -133,7 +133,7 @@ namespace FilmAPI.Controllers
             try
             {
                 await _characterService.DeleteAsync(id);
-                return Ok(id);
+                return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
