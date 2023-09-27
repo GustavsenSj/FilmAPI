@@ -1,3 +1,4 @@
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace FilmAPI.Data.Dtos.Characters;
 
 /// <summary>
@@ -5,6 +6,6 @@ namespace FilmAPI.Data.Dtos.Characters;
 /// </summary>
 public class CharacterNameInMovieDto
 {
-    public string FullName { get; set; } 
+    public string FullName { get; set; } = null!; 
     public string? Alias { get; set; }
 }

@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using FilmAPI.Data;
+using Microsoft.AspNetCore.Mvc;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Character;
 using AutoMapper;
-using FilmAPI.Data.DTOs;
-using System.Data;
-using FilmAPI.Data.Exceptions;
-using FilmAPI.Data.DTOs.Movies;
-using FilmAPI.Data.DTOs.Characters;
 using FilmAPI.Data.Dtos.Characters;
+using FilmAPI.Data.DTOs.Movies;
+using FilmAPI.Data.Exceptions;
 
 namespace FilmAPI.Controllers
 {
@@ -27,8 +22,10 @@ namespace FilmAPI.Controllers
             _mapper = mapper;
         }
 
-        /**************************************************************************************/
-        // GET: api/Characters
+        /// <summary>
+        /// Get all characters in the database
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
         {
@@ -45,8 +42,11 @@ namespace FilmAPI.Controllers
             return Ok(characterDtos);
         }
 
-        /**************************************************************************************/
-        // GET: api/Characters/5
+        /// <summary>
+        /// Get a character by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
         {
@@ -62,9 +62,13 @@ namespace FilmAPI.Controllers
             }
         }
 
-        /**************************************************************************************/
-        // PUT: api/Characters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+        /// <summary>
+        /// Update a character in the database 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="characterDto"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCharacter(int id, CharacterUpdateDto characterDto)
         {
@@ -72,6 +76,7 @@ namespace FilmAPI.Controllers
             {
                 return BadRequest();
             }
+
             try
             {
                 // chrDto -> chr entity
@@ -86,9 +91,11 @@ namespace FilmAPI.Controllers
             }
         }
 
-        /**************************************************************************************/
-        // POST: api/Characters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Add a character to the database
+        /// </summary>
+        /// <param name="characterDto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<CharacterAddDto>> AddCharacter(CharacterAddDto characterDto)
         {
@@ -101,20 +108,24 @@ namespace FilmAPI.Controllers
                 int assignedId = addedCharacter.Id;
                 // map back to dto
                 var addedCharacterDto = _mapper.Map<CharacterAddDto>(addedCharacter);
-                return CreatedAtAction(nameof(GetCharacter), 
-                    new { id = assignedId}, 
+                return CreatedAtAction(nameof(GetCharacter),
+                    new { id = assignedId },
                     addedCharacterDto);
             }
             catch (EntityAlreadyExistsException ex)
             {
                 // from stackoverflow, status code 409
                 // see https://stackoverflow.com/questions/3825990/http-response-code-for-post-when-resource-already-exists
-                return Conflict(ex.Message); 
+                return Conflict(ex.Message);
             }
         }
 
-        /**************************************************************************************/
-        // DELETE: api/Characters/5
+
+        /// <summary>
+        /// Delete a character from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)
         {
@@ -124,13 +135,17 @@ namespace FilmAPI.Controllers
                 await _characterService.DeleteAsync(id);
                 return NoContent();
             }
-            catch (EntityNotFoundException ex) 
-            { 
+            catch (EntityNotFoundException ex)
+            {
                 return NotFound(ex.Message);
             }
         }
 
-        /**************************************************************************************/
+        /// <summary>
+        /// Get all Characters in a movie 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/movies")]
         public async Task<ActionResult<IEnumerable<MovieDto>>> GetCharacterInMovies(int id)
         {
@@ -138,13 +153,13 @@ namespace FilmAPI.Controllers
             {
                 var movies = await _characterService.GetCharacterInMoviesAsync(id);
                 // map to dtos
-                var moviesDto = _mapper.Map<IEnumerable<MovieDto>>(movies);
+                var moviesDto = _mapper.Map<IEnumerable<MoviesByCharacterDto>>(movies);
                 return Ok(moviesDto);
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-        }   
+        }
     }
 }

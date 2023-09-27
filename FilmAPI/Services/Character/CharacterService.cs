@@ -1,17 +1,14 @@
-﻿using AutoMapper;
 using FilmAPI.Data;
 using FilmAPI.Data.Exceptions;
-using FilmAPI.Data.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmAPI.Services.Character
 {
-    public class CharacterService: ICharacterService
+    public class CharacterService : ICharacterService
     {
         private readonly FilmDbContext _context;
         //private readonly ICrudService<Data.Models.Character, int> _crudService;
-        
+
         public CharacterService(FilmDbContext context)
         {
             _context = context;
@@ -38,7 +35,8 @@ namespace FilmAPI.Services.Character
                     .FirstAsync(chr => chr.Id == id);
                 return character;
             }
-            throw new EntityNotFoundException(id);           
+
+            throw new EntityNotFoundException(id);
         }
 
         /**************************************************************************************/
@@ -52,6 +50,7 @@ namespace FilmAPI.Services.Character
                 await _context.SaveChangesAsync();
                 return obj;
             }
+
             throw new EntityAlreadyExistsException(nameof(obj), obj.Id);
         }
 
@@ -67,6 +66,7 @@ namespace FilmAPI.Services.Character
                 await _context.SaveChangesAsync();
                 return obj;
             }
+
             throw new EntityNotFoundException(obj.Id);
         }
 
@@ -78,6 +78,7 @@ namespace FilmAPI.Services.Character
             {
                 throw new EntityNotFoundException(id);
             }
+
             var character = await _context.Characters.FindAsync(id);
 
             character.Movies.Clear();
@@ -87,26 +88,26 @@ namespace FilmAPI.Services.Character
 
         /**************************************************************************************/
         // Get associated movies of a character
-        public async Task <ICollection<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
+        public async Task<ICollection<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
         {
             var characterNotNull = await _context.Characters
                 .AnyAsync(chr => chr.Id == characterId);
 
-            if ( characterNotNull )
+            if (characterNotNull)
             {
                 return await _context.Movies
                     .Where(chr => chr.Id == characterId)
                     .ToListAsync();
             }
+
             throw new EntityNotFoundException(characterId);
         }
+
         /**************************************************************************************/
         //HELPER METHOD
         private async Task<bool> CharacterExistsAsync(int id)
         {
             return await _context.Characters.AnyAsync(chr => chr.Id == id);
         }
-
-
     }
 }
