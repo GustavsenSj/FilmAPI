@@ -1,21 +1,27 @@
 using FilmAPI.Data;
 using FilmAPI.Data.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.SqlServer.Server;
 
 namespace FilmAPI.Services.Character
 {
+    /// <summary>
+    /// Service for the Character entity
+    /// </summary>
     public class CharacterService : ICharacterService
     {
         private readonly FilmDbContext _context;
         //private readonly ICrudService<Data.Models.Character, int> _crudService;
 
+        /// <summary>
+        /// Constructor for the CharacterService
+        /// </summary>
+        /// <param name="context"></param>
         public CharacterService(FilmDbContext context)
         {
             _context = context;
         }
 
-        /**************************************************************************************/
+        /// <inheritdoc />
         public async Task<IEnumerable<Data.Models.Character>> GetAllAsync()
         {
             // not sure if there should be an excpetion here since the db is already
@@ -24,7 +30,7 @@ namespace FilmAPI.Services.Character
             return await _context.Characters.Include(chr => chr.Movies).ToListAsync();
         }
 
-        /**************************************************************************************/
+        /// <inheritdoc />
         public async Task<Data.Models.Character> GetByIdAsync(int id)
         {
             bool characterNotNull = await _context.Characters.AnyAsync(
@@ -39,7 +45,7 @@ namespace FilmAPI.Services.Character
             throw new EntityNotFoundException(id);
         }
 
-        /**************************************************************************************/
+        /// <inheritdoc />
         public async Task<Data.Models.Character> AddAsync(Data.Models.Character obj)
         {
             // cana add/throw exception here for not being able to add an already-existing
@@ -54,7 +60,7 @@ namespace FilmAPI.Services.Character
             throw new EntityAlreadyExistsException(nameof(obj), obj.Id);
         }
 
-        /**************************************************************************************/
+        /// <inheritdoc />
         public async Task<Data.Models.Character> UpdateAsync(Data.Models.Character obj)
         {
             bool characterNotNull = await CharacterExistsAsync(obj.Id);
@@ -70,9 +76,8 @@ namespace FilmAPI.Services.Character
             throw new EntityNotFoundException(obj.Id);
         }
 
-        
 
-        /**************************************************************************************/
+        /// <inheritdoc />
         public async Task DeleteAsync(int id)
         {
             // Likely have to add try/catch here for triying to delete non existant character
@@ -83,13 +88,12 @@ namespace FilmAPI.Services.Character
 
             var character = await _context.Characters.FindAsync(id);
 
-            character.Movies.Clear();
+            character!.Movies.Clear();
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
         }
 
-        /**************************************************************************************/
-        // Get associated movies of a character
+        /// <inheritdoc />
         public async Task<ICollection<Data.Models.Movie>> GetCharacterInMoviesAsync(int characterId)
         {
             var character = await _context.Characters
@@ -103,8 +107,9 @@ namespace FilmAPI.Services.Character
 
             throw new EntityNotFoundException(characterId);
         }
-
-        /**************************************************************************************/
+        
+        /// <inheritdoc />
+        //TODO: Should this be done here as well?? 
         public async Task<Data.Models.Character> UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds)
         {
             if (!await CharacterExistsAsync(characterId))
@@ -124,11 +129,14 @@ namespace FilmAPI.Services.Character
                     .Where(mov => mov.Id == id)
                     .FirstAsync());
             }
-            character.Movies = movies;
+            character!.Movies = movies;
             await _context.SaveChangesAsync();
             return character;
         }
-        /**************************************************************************************/
+        
+        
+        
+        
         //HELPER METHOD
         private async Task<bool> CharacterExistsAsync(int id)
         {

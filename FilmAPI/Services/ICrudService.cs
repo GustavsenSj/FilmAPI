@@ -2,7 +2,12 @@ using FilmAPI.Data.Exceptions;
 
 namespace FilmAPI.Services;
 
-public interface ICrudService <T, ID>
+/// <summary>
+/// Interface for a service that provides CRUD operations for a type <typeparamref name="T"/> with an Id of type <typeparamref name="TId"/> 
+/// </summary>
+/// <typeparam name="T"> </typeparam>
+/// <typeparam name="TId"></typeparam>
+public interface ICrudService <T, in TId>
 {
     /// <summary>
     /// Gets all the instances of <typeparamref name="T"/> in the database
@@ -18,7 +23,7 @@ public interface ICrudService <T, ID>
     /// exception cref="EntityNotFoundException">
     /// <returns></returns>
     /// <exception cref="EntityNotFoundException"></exception>
-    Task<T> GetByIdAsync(ID id);
+    Task<T> GetByIdAsync(TId id);
     
     /// <summary>
     /// Adds an instance of <typeparamref name="T"/> to the database
@@ -42,5 +47,5 @@ public interface ICrudService <T, ID>
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="EntityNotFoundException"></exception>
-    Task DeleteAsync(ID id);
+    Task DeleteAsync(TId id);
 }
