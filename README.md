@@ -46,8 +46,16 @@ need tho have a connection string in the appsettings.json file. The connection s
 To create the database an populate it width dummy data you need to run the following commands in the Package Manager Console:
 
 ```bash
+dotnet tool install --global dotnet-ef
 dotnet ef migrations add InitialCreate
 dotnet ef database update
+```
+
+After this you should be able to run the project. To do this run the following command in the terminal:
+
+```bash
+dotnet restore
+dotnet run
 ```
 
 

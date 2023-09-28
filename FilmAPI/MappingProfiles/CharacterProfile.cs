@@ -3,7 +3,6 @@ using FilmAPI.Data.Dtos.Characters;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Models;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace FilmAPI.MappingProfiles
 {

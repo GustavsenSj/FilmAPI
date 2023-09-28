@@ -31,7 +31,7 @@ public class MovieService : IMovieService
     public async Task<Data.Models.Movie> GetByIdAsync(int id)
     {
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).Include(m=> m.Characters). FirstOrDefaultAsync() ?? null) ??
+        Data.Models.Movie movie = (await _context.Movies.Where(m => m.Id == id).Include(m=> m.Characters).Include(m => m.Franchise).FirstOrDefaultAsync() ?? null) ??
                                   throw new EntityNotFoundException(id);
         return movie;
     }
@@ -112,9 +112,24 @@ public class MovieService : IMovieService
     }
 
     /// <inheritdoc />
-    public Task AddFranchiseToMovieAsync(int movieId, int franchiseId)
+    public async Task AddFranchiseToMovieAsync(int movieId, int franchiseId)
     {
-        throw new NotImplementedException();
+        if (movieId <= 0 || franchiseId <= 0) throw new ArgumentOutOfRangeException(nameof(movieId));
+        if (!await MovieExistsAsync(movieId) || !await FranchiseExistsAsync(franchiseId))
+            throw new EntityNotFoundException(movieId);
+
+        var franchise = await _context.Franchises.FindAsync(franchiseId);
+        var movie = await _context.Movies.FindAsync(movieId);
+        if (franchise != null && movie != null)
+        {
+            movie.Franchise = franchise;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    private async Task<bool> FranchiseExistsAsync(int franchiseId)
+    {
+        return await _context.Franchises.AnyAsync(e => e.Id == franchiseId);
     }
 
     /// <summary>

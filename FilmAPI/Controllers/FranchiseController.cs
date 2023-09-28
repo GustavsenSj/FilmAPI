@@ -81,7 +81,6 @@ public class FranchiseController : ControllerBase
 
         try
         {
-            //TODO: might need to get all the movies from the old franchise and add them to the new one
             var newFranchise = await _service.UpdateAsync(_mapper.Map<Franchise>(franchise));
             return Ok(newFranchise);
         }

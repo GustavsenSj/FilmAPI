@@ -1,7 +1,5 @@
 ﻿using FilmAPI.Data.DTOs.Movies;
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-namespace FilmAPI.Data.DTOs;
+namespace FilmAPI.Data.Dtos.Franchises;
 /// <summary>
 /// FranchiseDto is a DTO for Franchise objects. 
 /// </summary>

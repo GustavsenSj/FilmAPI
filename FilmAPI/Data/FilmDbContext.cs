@@ -1,6 +1,5 @@
 using FilmAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace FilmAPI.Data;
 

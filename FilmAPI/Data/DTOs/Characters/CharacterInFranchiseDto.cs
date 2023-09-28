@@ -1,5 +1,4 @@
 namespace FilmAPI.Data.Dtos.Characters;
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
 /// CharacterInFranchiseDto is a DTO for Character objects in the context of a Franchise.
