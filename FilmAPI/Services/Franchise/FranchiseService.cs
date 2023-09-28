@@ -70,6 +70,23 @@ public class FranchiseService : IFranchiseService
         }
         await _context.SaveChangesAsync();
     }
+    
+    
+    public async Task<ICollection<Data.Models.Movie>> GetMoviesInFranchiseAsync(int id)
+    {
+        if(id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+        if (!await FranchiseExistsAsync(id))
+            throw new EntityNotFoundException(id);
+
+        var movies = await _context.Movies.Where(m => m.Franchise != null && m.Franchise.Id == id)
+            .ToListAsync();
+        if (movies == null)
+        {
+            throw new EntityNotFoundException(id);
+        }
+        return movies;
+    }
+    
     private async Task<bool> FranchiseExistsAsync(int tId)
     {
         return await _context.Franchises.AnyAsync(f => f.Id == tId);

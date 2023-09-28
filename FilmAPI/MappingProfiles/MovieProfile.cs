@@ -19,17 +19,17 @@ public class MovieProfile : Profile
         CreateMap<Movie, MoviePostDto>().ReverseMap();
         CreateMap<Movie, MoviePutDto>().ReverseMap();
         CreateMap<Movie, MoviesByCharacterDto>();
-         CreateMap<Movie, MovieGetDto>()
-        .ForMember(
-            mdto => mdto.Characters,
-            options => options.MapFrom(
-                movie => movie.Characters.Select(character => new CharacterNameInMovieDto
-                {
-                    FullName = character.FullName,
-                    Alias = character.Alias
-                }).ToList()
-            )
-        );
-
+        CreateMap<Movie, MovieInFranchiseDto>();
+        CreateMap<Movie, MovieGetDto>()
+            .ForMember(
+                mdto => mdto.Characters,
+                options => options.MapFrom(
+                    movie => movie.Characters.Select(character => new CharacterNameInMovieDto
+                    {
+                        FullName = character.FullName,
+                        Alias = character.Alias
+                    }).ToList()
+                )
+            );
     }
 }

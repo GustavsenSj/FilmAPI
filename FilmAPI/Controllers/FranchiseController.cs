@@ -1,5 +1,6 @@
 using AutoMapper;
 using FilmAPI.Data.Dtos.Franchises;
+using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Exceptions;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Franchise;
@@ -106,6 +107,25 @@ public class FranchiseController : ControllerBase
         {
             await _service.DeleteAsync(id);
             return Ok();
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Get all the movies in a franchise
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}/movies")]
+    public async Task<ActionResult<IEnumerable<MovieInFranchiseDto>>> GetMoviesByFranchiseId(int id)
+    {
+        try
+        {
+            var movies = await _service.GetMoviesInFranchiseAsync(id);
+            return Ok(_mapper.Map<IEnumerable<MovieInFranchiseDto>>(movies));
         }
         catch (EntityNotFoundException e)
         {
