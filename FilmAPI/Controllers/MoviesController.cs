@@ -77,7 +77,8 @@ public class MovieController : ControllerBase
             int assingedId = postedMovie.Id;
             // reverse map back to dot
             var postedMovieDto = _mapper.Map<MoviePostDto>(postedMovie);
-            return CreatedAtAction(nameof(postedMovieDto),
+            
+            return CreatedAtAction(nameof(PostMovie),
                 new { id = assingedId },
                 postedMovieDto);
         }
@@ -169,6 +170,21 @@ public class MovieController : ControllerBase
             return Ok(_mapper.Map<IEnumerable<CharacterInMovieDto>>(
                 await _service.GetCharactersForMovieAsync(id))
             );
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+    
+    
+    [HttpPut("{id}/franchise")]
+    public async Task<IActionResult> UpdateFranchise(int id, [FromBody] int franchiseId)
+    {
+        try
+        {
+            await _service.AddFranchiseToMovieAsync(id, franchiseId);
+            return Ok();
         }
         catch (EntityNotFoundException e)
         {
