@@ -128,8 +128,14 @@ public class FranchiseController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="movieIds"></param>
+    /// <returns></returns>
     [HttpPut("{id}/movies")]
-    public async Task<IActionResult> updateMovies(int id, [FromBody] int[] movieIds)
+    public async Task<IActionResult> UpdateMovies(int id, [FromBody] int[] movieIds)
     {
         try
         {
