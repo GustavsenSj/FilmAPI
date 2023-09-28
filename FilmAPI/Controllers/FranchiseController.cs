@@ -1,5 +1,6 @@
 using AutoMapper;
 using FilmAPI.Data.Dtos.Franchises;
+using FilmAPI.Data.Exceptions;
 using FilmAPI.Data.Models;
 using FilmAPI.Services.Franchise;
 using Microsoft.AspNetCore.Mvc;
@@ -59,12 +60,56 @@ public class FranchiseController : ControllerBase
     /// <summary>
     /// Post a new franchise to the database
     /// </summary>
-    /// <param name="franchise"></param>
-    /// <returns></returns>
+    /// <param name="franchise">The Franchise to be added</param>
+    /// <returns>The created franchise</returns>
     [HttpPost]
     public async Task<ActionResult<FranchisePostDto>> PostFranchise(FranchisePostDto franchise)
     {
         var newFranchise = await _service.AddAsync( _mapper.Map<Franchise>(franchise));
         return CreatedAtAction("GetFranchiseById", new {id = newFranchise.Id}, newFranchise);
+    }
+    
+    /// <summary>
+    /// Update a franchise in the database
+    /// </summary>
+    /// <param name="id">The id of the franchise to update</param>
+    /// <param name="franchise"> The franchise object with updated information</param>
+    /// <returns></returns>
+    [HttpPut("{id}")]
+    public async Task<ActionResult<FranchisePutDto>> PutFranchise(int id,FranchisePutDto franchise)
+    {
+        if (id != franchise.Id)
+        {
+            return BadRequest();
+        }
+        try
+        {
+            //TODO: might need to get all the movies from the old franchise and add them to the new one
+            var newFranchise = await _service.UpdateAsync(_mapper.Map<Franchise>(franchise));
+            return Ok(newFranchise);
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        } 
+    }
+    
+    /// <summary>
+    /// Delete a franchise from the database
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteFranchise(int id)
+    {
+        try
+        {
+            await _service.DeleteAsync(id);
+            return Ok();
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 }

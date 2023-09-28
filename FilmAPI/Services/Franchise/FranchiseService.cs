@@ -45,14 +45,42 @@ public class FranchiseService : IFranchiseService
     }
 
     /// <inheritdoc />
-    public Task<Data.Models.Franchise> UpdateAsync(Data.Models.Franchise t)
+    public async Task<Data.Models.Franchise> UpdateAsync(Data.Models.Franchise obj)
     {
-        throw new NotImplementedException();
+        if(!await FranchiseExistsAsync(obj.Id))
+            throw new EntityNotFoundException(obj.Id);
+        obj.Movies.Clear();
+        _context.Entry(obj).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return obj;
     }
 
+
     /// <inheritdoc />
-    public Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        if (!await FranchiseExistsAsync(id))
+            throw new EntityNotFoundException(id);
+        var franchise = await _context.Franchises.FindAsync(id);
+        if (franchise != null)
+        {
+            franchise.Movies.Clear();
+            await RemoveFranchiseFromMovies(id);
+            _context.Franchises.Remove(franchise);
+        }
+        await _context.SaveChangesAsync();
+    }
+    private async Task<bool> FranchiseExistsAsync(int tId)
+    {
+        return await _context.Franchises.AnyAsync(f => f.Id == tId);
+    }
+    
+    private async Task RemoveFranchiseFromMovies(int id)
+    {
+        var movies = await _context.Movies.Where(m => m.Franchise != null && m.Franchise.Id == id).ToListAsync();
+        foreach (var movie in movies)
+        {
+            movie.Franchise = null;
+        }
     }
 }

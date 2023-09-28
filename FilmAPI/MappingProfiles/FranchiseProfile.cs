@@ -16,5 +16,6 @@ public class FranchiseProfile : Profile
     {
         CreateMap<Franchise, FranchiseGetDto>();
         CreateMap<FranchisePostDto, Franchise>();
+        CreateMap<FranchisePutDto, Franchise>();
     }
 }
