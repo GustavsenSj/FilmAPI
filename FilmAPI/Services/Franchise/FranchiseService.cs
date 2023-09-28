@@ -1,4 +1,5 @@
 using FilmAPI.Data;
+using FilmAPI.Data.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmAPI.Services.Franchise;
@@ -26,15 +27,21 @@ public class FranchiseService : IFranchiseService
     }
 
     /// <inheritdoc />
-    public Task<Data.Models.Franchise> GetByIdAsync(int id)
+    public async Task<Data.Models.Franchise> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+        Data.Models.Franchise franchise =
+            (await _context.Franchises.Where(f => f.Id == id).FirstOrDefaultAsync() ?? null) ??
+            throw new EntityNotFoundException(id);
+        return franchise;
     }
 
     /// <inheritdoc />
-    public Task<Data.Models.Franchise> AddAsync(Data.Models.Franchise t)
+    public async Task<Data.Models.Franchise> AddAsync(Data.Models.Franchise obj)
     {
-        throw new NotImplementedException();
+        await _context.Franchises.AddAsync(obj);
+        await _context.SaveChangesAsync();
+        return obj;
     }
 
     /// <inheritdoc />

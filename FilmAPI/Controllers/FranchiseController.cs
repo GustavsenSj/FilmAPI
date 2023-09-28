@@ -32,11 +32,39 @@ public class FranchiseController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Franchise>>> GetFranchises()
+    public async Task<ActionResult<IEnumerable<FranchiseGetDto>>> GetFranchises()
     {
         return Ok(_mapper.Map<IEnumerable<FranchiseGetDto>>(
             await _service.GetAllAsync())
         );
     }
     
+    /// <summary>
+    /// Get a franchise by its id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<FranchiseGetDto>> GetFranchiseById(int id)
+    {
+        var franchise = await _service.GetByIdAsync(id);
+        if (franchise == null)
+        {
+            return NotFound();
+        }
+        var franchiseDto = _mapper.Map<FranchiseGetDto>(franchise);
+        return Ok(franchiseDto);
+    }
+
+    /// <summary>
+    /// Post a new franchise to the database
+    /// </summary>
+    /// <param name="franchise"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<ActionResult<FranchisePostDto>> PostFranchise(FranchisePostDto franchise)
+    {
+        var newFranchise = await _service.AddAsync( _mapper.Map<Franchise>(franchise));
+        return CreatedAtAction("GetFranchiseById", new {id = newFranchise.Id}, newFranchise);
+    }
 }
