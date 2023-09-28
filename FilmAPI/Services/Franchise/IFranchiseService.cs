@@ -22,4 +22,11 @@ public interface IFranchiseService : ICrudService<Data.Models.Franchise, int>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <exception cref="EntityNotFoundException"></exception>
     Task UpdateMoviesInFranchiseAsync(int id, int[] movieIds);
+
+    /// <summary>
+    /// Get all the characters in a franchise
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Data.Models.Character>> GetCharactersInFranchiseAsync(int id);
 }

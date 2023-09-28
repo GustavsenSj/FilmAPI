@@ -30,6 +30,7 @@ namespace FilmAPI.MappingProfiles
             CreateMap<Character, CharacterInMovieDto>();
             CreateMap<Character, CharacterAddDto>().ReverseMap();
             CreateMap<Character, CharacterUpdateDto>().ReverseMap();
+            CreateMap<Character, CharacterInFranchiseDto>();
             
         }
     }

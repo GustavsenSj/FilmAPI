@@ -31,7 +31,7 @@ public class FranchiseService : IFranchiseService
     {
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
         Data.Models.Franchise franchise =
-            (await _context.Franchises.Where(f => f.Id == id).Include(f=>f.Movies).FirstOrDefaultAsync() ?? null) ??
+            (await _context.Franchises.Where(f => f.Id == id).Include(f => f.Movies).FirstOrDefaultAsync() ?? null) ??
             throw new EntityNotFoundException(id);
         return franchise;
     }
@@ -95,7 +95,7 @@ public class FranchiseService : IFranchiseService
     public async Task UpdateMoviesInFranchiseAsync(int id, int[] movieIds)
     {
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-        if (!FranchiseExistsAsync(id).Result)
+        if (!await FranchiseExistsAsync(id))
             throw new EntityNotFoundException(id);
 
         Data.Models.Franchise franchise =
@@ -112,6 +112,30 @@ public class FranchiseService : IFranchiseService
 
         franchise.Movies = movies;
         await _context.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Data.Models.Character>> GetCharactersInFranchiseAsync(int id)
+    {
+        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+        if (!await FranchiseExistsAsync(id))
+            throw new EntityNotFoundException(id);
+        List<Data.Models.Character> characterList = new List<Data.Models.Character>();
+
+        var franchises =
+            await _context.Franchises.Include(f => f.Movies).ThenInclude(m => m.Characters)
+                .SingleAsync(f => id == f.Id);
+        foreach (var movie in franchises.Movies)
+        {
+            foreach (var character in movie.Characters)
+            {
+                if (!characterList.Contains(character))
+                    characterList.Add(character);
+            }
+        }
+
+
+        return characterList;
     }
 
     private async Task<bool> MovieExistsAsync(int movieId)
