@@ -1,5 +1,6 @@
 using AutoMapper;
 using FilmAPI.Data.Dtos.Characters;
+using FilmAPI.Data.Dtos.Franchises;
 using FilmAPI.Data.DTOs.Movies;
 using FilmAPI.Data.Models;
 
@@ -30,6 +31,10 @@ public class MovieProfile : Profile
                         Alias = character.Alias
                     }).ToList()
                 )
-            );
+            )
+            .ForMember(mdto => mdto.Franchise, options=> options.MapFrom(movie => new FranchiseInMovieDto
+            {
+                Name = movie.Franchise.Name
+            }));
     }
 }

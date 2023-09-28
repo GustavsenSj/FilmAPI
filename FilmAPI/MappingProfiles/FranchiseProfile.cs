@@ -18,5 +18,6 @@ public class FranchiseProfile : Profile
         CreateMap<Franchise, FranchiseGetDto>().ForMember(fdto => fdto.Movies, options => options.MapFrom(franchise => franchise.Movies.Select(movie => new MovieInCharacterDto {Title = movie.Title}).ToList())); 
         CreateMap<FranchisePostDto, Franchise>();
         CreateMap<FranchisePutDto, Franchise>();
+        CreateMap<Franchise, FranchiseInMovieDto>();
     }
 }
