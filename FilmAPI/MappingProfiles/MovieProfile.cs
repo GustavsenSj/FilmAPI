@@ -34,7 +34,7 @@ public class MovieProfile : Profile
             )
             .ForMember(mdto => mdto.Franchise, options=> options.MapFrom(movie => new FranchiseInMovieDto
             {
-                Name = movie.Franchise.Name
+                Name = movie.Franchise!.Name
             }));
     }
 }

@@ -1,5 +1,4 @@
 namespace FilmAPI.Data.DTOs.Movies;
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
 /// MovieInFranchiseDto is a DTO for Movie objects when displayed in aa context of a Franchise.

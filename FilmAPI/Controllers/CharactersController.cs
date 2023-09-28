@@ -115,7 +115,7 @@ public class CharactersController : ControllerBase
                 int assignedId = addedCharacter.Id;
                 // map back to dto
                 var addedCharacterDto = _mapper.Map<CharacterAddDto>(addedCharacter);
-                return CreatedAtAction(nameof(addedCharacterDto),
+                return CreatedAtAction(nameof(AddCharacter),
                     new { id = assignedId },
                     addedCharacterDto);
             }

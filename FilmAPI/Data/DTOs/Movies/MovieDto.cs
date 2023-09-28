@@ -1,5 +1,4 @@
 using FilmAPI.Data.Dtos.Characters;
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace FilmAPI.Data.DTOs.Movies;
 
