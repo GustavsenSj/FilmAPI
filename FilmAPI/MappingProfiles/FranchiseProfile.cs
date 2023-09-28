@@ -1,6 +1,7 @@
 using FilmAPI.Data.Dtos.Franchises;
 using FilmAPI.Data.Models;
 using AutoMapper;
+using FilmAPI.Data.DTOs.Movies;
 
 namespace FilmAPI.MappingProfiles;
 
@@ -14,7 +15,7 @@ public class FranchiseProfile : Profile
     /// </summary>
     public FranchiseProfile()
     {
-        CreateMap<Franchise, FranchiseGetDto>();
+        CreateMap<Franchise, FranchiseGetDto>().ForMember(fdto => fdto.Movies, options => options.MapFrom(franchise => franchise.Movies.Select(movie => new MovieInCharacterDto {Title = movie.Title}).ToList())); 
         CreateMap<FranchisePostDto, Franchise>();
         CreateMap<FranchisePutDto, Franchise>();
     }

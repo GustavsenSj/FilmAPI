@@ -28,7 +28,7 @@ public class FranchiseController : ControllerBase
         _service = service;
         _mapper = mapper;
     }
-    
+
     /// <summary>
     /// Get all franchises in the database
     /// </summary>
@@ -40,7 +40,7 @@ public class FranchiseController : ControllerBase
             await _service.GetAllAsync())
         );
     }
-    
+
     /// <summary>
     /// Get a franchise by its id
     /// </summary>
@@ -49,13 +49,7 @@ public class FranchiseController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<FranchiseGetDto>> GetFranchiseById(int id)
     {
-        var franchise = await _service.GetByIdAsync(id);
-        if (franchise == null)
-        {
-            return NotFound();
-        }
-        var franchiseDto = _mapper.Map<FranchiseGetDto>(franchise);
-        return Ok(franchiseDto);
+        return Ok(_mapper.Map<FranchiseGetDto>(await _service.GetByIdAsync(id)));
     }
 
     /// <summary>
@@ -66,10 +60,10 @@ public class FranchiseController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FranchisePostDto>> PostFranchise(FranchisePostDto franchise)
     {
-        var newFranchise = await _service.AddAsync( _mapper.Map<Franchise>(franchise));
-        return CreatedAtAction("GetFranchiseById", new {id = newFranchise.Id}, newFranchise);
+        var newFranchise = await _service.AddAsync(_mapper.Map<Franchise>(franchise));
+        return CreatedAtAction("GetFranchiseById", new { id = newFranchise.Id }, newFranchise);
     }
-    
+
     /// <summary>
     /// Update a franchise in the database
     /// </summary>
@@ -77,12 +71,13 @@ public class FranchiseController : ControllerBase
     /// <param name="franchise"> The franchise object with updated information</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<ActionResult<FranchisePutDto>> PutFranchise(int id,FranchisePutDto franchise)
+    public async Task<ActionResult<FranchisePutDto>> PutFranchise(int id, FranchisePutDto franchise)
     {
         if (id != franchise.Id)
         {
             return BadRequest();
         }
+
         try
         {
             //TODO: might need to get all the movies from the old franchise and add them to the new one
@@ -92,9 +87,9 @@ public class FranchiseController : ControllerBase
         catch (EntityNotFoundException e)
         {
             return NotFound(e.Message);
-        } 
+        }
     }
-    
+
     /// <summary>
     /// Delete a franchise from the database
     /// </summary>
@@ -113,7 +108,7 @@ public class FranchiseController : ControllerBase
             return NotFound(e.Message);
         }
     }
-    
+
     /// <summary>
     /// Get all the movies in a franchise
     /// </summary>
@@ -126,6 +121,20 @@ public class FranchiseController : ControllerBase
         {
             var movies = await _service.GetMoviesInFranchiseAsync(id);
             return Ok(_mapper.Map<IEnumerable<MovieInFranchiseDto>>(movies));
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+
+    [HttpPut("{id}/movies")]
+    public async Task<IActionResult> updateMovies(int id, [FromBody] int[] movieIds)
+    {
+        try
+        {
+            await _service.UpdateMoviesInFranchiseAsync(id, movieIds);
+            return Ok();
         }
         catch (EntityNotFoundException e)
         {
