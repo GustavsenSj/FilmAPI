@@ -19,6 +19,5 @@ namespace FilmAPI.Services.Character
         /// <param name="movieIds"></param>
         /// <returns></returns>
         Task<Data.Models.Character> UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds);
-        //TODO: This should probably be in a MovieService as characters are applied to movies could cause a lot of trouble if this is done here
     }
 }

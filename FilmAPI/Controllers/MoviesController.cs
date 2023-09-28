@@ -34,7 +34,7 @@ public class MovieController : ControllerBase
     /// </summary>
     /// <returns> </returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+    public async Task<ActionResult<IEnumerable<MovieGetDto>>> GetMovies()
     {
         return Ok(_mapper.Map<IEnumerable<MovieGetDto>>(
             await _service.GetAllAsync())
@@ -47,7 +47,7 @@ public class MovieController : ControllerBase
     /// <param name="id"> The id of the movie to get</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<Movie>> GetMovieById(int id)
+    public async Task<ActionResult<MovieGetDto>> GetMovieById(int id)
     {
         var movie = await _service.GetByIdAsync(id);
         if (movie == null)
@@ -147,7 +147,7 @@ public class MovieController : ControllerBase
     /// <returns></returns>
     /// <exception cref="EntityNotFoundException"></exception>
     [HttpGet("{id}/characters")]
-    public async Task<IActionResult> GetCharacters(int id)
+    public async Task<ActionResult<IEnumerable<CharacterInMovieDto>>> GetCharacters(int id)
     {
         try
         {

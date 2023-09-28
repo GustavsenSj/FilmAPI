@@ -154,7 +154,7 @@ public class CharactersController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}/movies")]
-    public async Task<ActionResult<IEnumerable<MovieDto>>> GetCharacterInMovies(int id)
+    public async Task<ActionResult<IEnumerable<MoviesByCharacterDto>>> GetCharacterInMovies(int id)
     {
         try
         {
