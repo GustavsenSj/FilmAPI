@@ -1,4 +1,6 @@
 using FilmAPI.Data.Dtos.Characters;
+using FilmAPI.Data.Dtos.Franchises;
+using FilmAPI.Data.Models;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace FilmAPI.Data.DTOs.Movies;
@@ -17,5 +19,5 @@ public class MovieGetDto
     public string? Trailer { get; set; }
 
     public ICollection<CharacterNameInMovieDto> Characters { get; set; } = null!;
-    //TODO: add franchise 
+    public FranchiseInMovieDto? Franchise { get; set; }
 }

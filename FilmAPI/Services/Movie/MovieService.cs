@@ -23,7 +23,7 @@ public class MovieService : IMovieService
     /// <inheritdoc />
     public async Task<IEnumerable<Data.Models.Movie>> GetAllAsync()
     {
-        return await _context.Movies.Include(m => m.Characters).ToListAsync();
+        return await _context.Movies.Include(m => m.Characters).Include(m=> m.Franchise).ToListAsync();
     }
 
 
