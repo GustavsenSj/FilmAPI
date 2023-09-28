@@ -1,5 +1,6 @@
 using FilmAPI.Data;
 using FilmAPI.Data.Exceptions;
+using FilmAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmAPI.Services.Character
@@ -134,8 +135,39 @@ namespace FilmAPI.Services.Character
             return character;
         }
         
-        
-        
+        /// <inheritdoc/>
+        public async Task<Data.Models.Character> AddCharacterToMovieAsync(int movieId, int characterId)
+        {
+            // check if the movie exists at all & also do for character exists check
+
+            if (!await MovieExistsAsync(movieId))
+            {
+                throw new EntityNotFoundException(movieId);
+            }
+
+            if (!await CharacterExistsAsync(characterId))
+            {
+                throw new EntityNotFoundException(characterId);
+            }
+
+            // Last check of wether character is already IN the movie 
+            var selectedMovie = await _context.Movies
+                .Include(mov => mov.Characters)
+                .FirstOrDefaultAsync(mov => mov.Id == movieId);
+            if (selectedMovie.Characters.Any( chr => chr.Id == characterId))
+            {
+                throw new EntityAlreadyExistsException(nameof(Character), characterId);
+            }
+
+            // Add chr to d movie & save.
+            var selectedCharacter = await _context.Characters
+                .Include(chr => chr.Movies)
+                .FirstOrDefaultAsync(chr => chr.Id == characterId);
+            selectedMovie.Characters.Add(selectedCharacter);
+            await _context.SaveChangesAsync();
+            return selectedCharacter;
+
+        }
         
         //HELPER METHOD
         private async Task<bool> CharacterExistsAsync(int id)

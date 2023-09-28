@@ -2,7 +2,7 @@
 namespace FilmAPI.Data.Dtos.Characters;
 
 /// <summary>
-/// DTO for adding a character
+/// DTO for adding/posting a character
 /// </summary>
 public class CharacterAddDto
 {

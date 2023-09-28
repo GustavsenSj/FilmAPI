@@ -19,5 +19,13 @@ namespace FilmAPI.Services.Character
         /// <param name="movieIds"></param>
         /// <returns></returns>
         Task<Data.Models.Character> UpdateMoviesOfCharacterAsync(int characterId, int[] movieIds);
+
+        /// <summary>
+        /// Add a character to movie
+        /// </summary>
+        /// <param name="movieId"></param>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        Task<Data.Models.Character> AddCharacterToMovieAsync(int movieId, int characterId);
     }
 }
