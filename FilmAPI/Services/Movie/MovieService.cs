@@ -39,9 +39,13 @@ public class MovieService : IMovieService
     /// <inheritdoc />
     public async Task<Data.Models.Movie> AddAsync(Data.Models.Movie obj)
     {
-        await _context.Movies.AddAsync(obj);
-        await _context.SaveChangesAsync();
-        return obj;
+        if (!await MovieExistsAsync(obj.Id))
+        {
+            await _context.Movies.AddAsync(obj);
+            await _context.SaveChangesAsync();
+            return obj;
+        }
+        throw new EntityAlreadyExistsException(nameof(obj), obj.Id);
     }
 
     /// <inheritdoc />

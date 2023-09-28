@@ -68,8 +68,23 @@ public class MovieController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<MoviePostDto>> PostMovie(MoviePostDto movie)
     {
-        var newMovie = await _service.AddAsync(_mapper.Map<Movie>(movie));
-        return CreatedAtAction("GetMovieById", new { id = newMovie.Id }, newMovie);
+        // dto->entity
+        var movieEntity = _mapper.Map<Movie>(movie);
+        try
+        {
+            // post to db
+            var postedMovie = await _service.AddAsync(_mapper.Map<Movie>(movieEntity));
+            int assingedId = postedMovie.Id;
+            // reverse map back to dot
+            var postedMovieDto = _mapper.Map<MoviePostDto>(postedMovie);
+            return CreatedAtAction(nameof(postedMovieDto),
+                new { id = assingedId },
+                postedMovieDto);
+        }
+        catch (EntityAlreadyExistsException ex)
+        {
+            return Conflict(ex.Message);
+        }
     }
 
     /// <summary>
