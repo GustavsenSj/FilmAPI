@@ -135,7 +135,7 @@ namespace FilmAPI.Services.Character
         }
         
         /// <inheritdoc/>
-        public async Task<Data.Models.Character> AddCharacterToMovieAsync(int movieId, int characterId)
+        public async Task<Data.Models.Character> AddCharacterToMovieAsync(int characterId, int movieId) 
         {
             // check if the movie exists at all & also do for character exists check
 
@@ -149,18 +149,10 @@ namespace FilmAPI.Services.Character
                 throw new EntityNotFoundException(characterId);
             }
 
-            // Last check of wether character is already IN the movie 
-            var selectedMovie = await _context.Movies
-                .Include(mov => mov.Characters)
-                .FirstOrDefaultAsync(mov => mov.Id == movieId);
-            if (selectedMovie.Characters.Any( chr => chr.Id == characterId))
-            {
-                throw new EntityAlreadyExistsException(nameof(Character), characterId);
-            }
-
+            var selectedMovie = await _context.Movies.Where(m => movieId == m.Id).FirstAsync();
+                
             // Add chr to d movie & save.
             var selectedCharacter = await _context.Characters
-                .Include(chr => chr.Movies)
                 .FirstOrDefaultAsync(chr => chr.Id == characterId);
             selectedMovie.Characters.Add(selectedCharacter);
             await _context.SaveChangesAsync();

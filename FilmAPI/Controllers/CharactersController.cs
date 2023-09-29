@@ -168,15 +168,19 @@ public class CharactersController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-    public async Task<ActionResult> AddCharacterToMovie(int movieId, int characterId)
+    /// <summary>
+    /// Add a character to a movie
+    /// </summary>
+    /// <param name="id">The id of the character to be added</param>
+    /// <param name="movieId">The Id of the movie to add the character to</param>
+    /// <returns></returns>
+    [HttpPut("{id}/movies")]
+    public async Task<ActionResult> AddCharacterToMovie(int id, [FromBody] int movieId)
     {
         try
         {
-            var character = await _characterService.AddCharacterToMovieAsync(movieId, characterId);
-
-            // reversmap to dto response return
-            var characterDto = _mapper.Map<CharacterDto>(character);
-            return Ok(characterDto);
+             await _characterService.AddCharacterToMovieAsync(id, movieId);
+            return Ok();
         }
         catch (EntityNotFoundException ex)
         {

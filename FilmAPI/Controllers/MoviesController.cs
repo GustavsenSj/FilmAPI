@@ -177,7 +177,12 @@ public class MovieController : ControllerBase
         }
     }
     
-    
+    /// <summary>
+    /// Update the franchise for a movie
+    /// </summary>
+    /// <param name="id">The id of the movie to update</param>
+    /// <param name="franchiseId">The id of the franchise to add the movie to</param>
+    /// <returns></returns>
     [HttpPut("{id}/franchise")]
     public async Task<IActionResult> UpdateFranchise(int id, [FromBody] int franchiseId)
     {

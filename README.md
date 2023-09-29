@@ -22,7 +22,7 @@ Media.
 - [x] Create controllers and DTOs according to the specifications.
 - [x] Encapsulate DbContext into Services for each domain entity. Movie, Character, and Franchise.
 - [x] Swagger/Open API documentation using annotations.
-- [ ] Summary (///) tags for each method you write, explaining what the method does, any exceptions it can throw, and
+- [x] Summary (///) tags for each method you write, explaining what the method does, any exceptions it can throw, and
   what data it returns (if applicable). You do not need to write summary tags for overloaded methods.
 
 ## Collaborators
